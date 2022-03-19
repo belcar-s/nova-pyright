@@ -1,0 +1,39 @@
+{
+    "identifier": "com.belcar.pyright",
+    "name": "Python+",
+    "description": "A Python extension powered by VSCode's Language Server.",
+    "main": "main.js",
+
+    "entitlements": {
+        "process": true
+    },
+    "activationEvents": [
+        "onLanguage:python"
+    ],
+    "bugs": "https://github.com/belcar-s/nova-pyright",
+    "categories": [
+        "languages",
+        "issues",
+        "completions",
+        "commands"
+    ],
+
+    "commands": {
+        "editor": [
+            {
+                "title": "Order Imports",
+                "command": "orderImports",
+                "filters": {
+                    "syntaxes": ["python"]
+                }
+            },
+            {
+                "title": "Add Missing Optional To Parameter",
+                "command": "addMissingOptionalToParam",
+                "filters": {
+                    "syntaxes": ["python"]
+                }
+            }
+        ]
+    }
+}
