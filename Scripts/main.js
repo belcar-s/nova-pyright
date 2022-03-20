@@ -93,7 +93,7 @@ class PyrightLanguageServer {
             env: {
             },
             path: this.path,
-            type: "socket" // I think???
+            type: "pipe" // I think???
         }
         const clientOptions = {
             initializationOptions: {
