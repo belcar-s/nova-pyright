@@ -1,6 +1,8 @@
 let langserver = null;
 
 exports.activate = async function () {
+    /*
+    Language Server */
     const containingFolder = nova.path.join(__dirname, "Pyright Language Server");
     const defaultPath = nova.path.join(containingFolder, "primary", "nodeMain.js");
     // The user can choose to download a more recent version of
@@ -28,12 +30,7 @@ exports.activate = async function () {
             )
         langserver.deactivate()
         langserver = newLangserver
-
-        try {
-            await langserver.start()
-        } catch (e) {
-            handleStartupError(e)
-        }
+        safelyStartServer(langserver)
     })
     nova.workspace.config.observe("pyright.validation_enabled",
         (isEnabled) => {
@@ -41,11 +38,25 @@ exports.activate = async function () {
         }
     );
 
-    try {
-        await langserver.start()
-    } catch (e) {
-        handleStartupError(e)
-    }
+    safelyStartServer(langserver);
+
+    /*
+    Commands */
+    // These are registered after the Language Server starts
+    // because the efficacy of most of them relies on that it
+    // does so.
+    nova.commands.register("restartLanguageServer", (editor) => {
+        langserver.deactivate();
+        safelyStartServer(langserver);
+    })
+    
+    nova.commands.register("orderImports", (editor) => {
+
+    })
+
+    nova.commands.register("addMissingOptionalParam", (editor) => {
+
+    })
 }
 
 exports.deactivate = function () {
@@ -55,6 +66,14 @@ exports.deactivate = function () {
     // a bothersome error message.
     if (langserver) {
         langserver.deactivate();
+    }
+}
+
+async function safelyStartServer(langserver) {
+    try {
+        await langserver.start()
+    } catch (e) {
+        handleStartupError(e)
     }
 }
 
@@ -123,7 +142,7 @@ class PyrightLanguageServer {
             clientOptions,
         )
 
-        this.languageClient.start();
+        await this.languageClient.start();
     }
 
     deactivate() {

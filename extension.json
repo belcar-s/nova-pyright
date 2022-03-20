@@ -35,6 +35,13 @@
                 "filters": {
                     "syntaxes": ["python"]
                 }
+            },
+            {
+                "title": "Restart Python Language Server",
+                "command": "restartLanguageServer",
+                "filters": {
+                    "syntaxes": ["python"]
+                }
             }
         ]
     },
@@ -64,7 +71,7 @@
 	"sidebars": [
 		{
 			"id": "pyright.status",
-			"name": "Pyright LSP Server",
+			"name": "Python Language Server",
 			"smallImage": "logo-small",
 			"smallSelectedImage": "logo-small-selected",
 			"largeImage": "logo-large",
@@ -78,7 +85,7 @@
 							"title": "Restart",
 							"image": "restart",
 							"tooltip": "Restart the Pyright Language Server",
-							"command": "pyright.status-restart"
+							"command": "restartLanguageServer"
 						}
 					]
 				},
