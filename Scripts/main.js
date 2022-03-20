@@ -49,9 +49,12 @@ exports.activate = async function () {
 }
 
 exports.deactivate = function () {
+    // 'langserver' supposedly might be null if the 'activate' function
+    // hasn't been completely run. In that case, of course, calls to
+    // 'langserver' methods will fail. The consequence is supposedly
+    // a bothersome error message.
     if (langserver) {
         langserver.deactivate();
-        langserver = null;
     }
 }
 
@@ -120,11 +123,11 @@ class PyrightLanguageServer {
             clientOptions,
         )
 
-        this.languageClient.start()
+        this.languageClient.start();
     }
 
     deactivate() {
-        // To-do
+        this.languageClient.stop();
     }
 
     changePath(newPath) {
