@@ -1,5 +1,5 @@
 {
-    "identifier": "com.belcar.pyright",
+    "identifier": "belcar.pyright",
     "name": "Python+",
     "description": "A Python extension powered by VSCode's Language Server.",
     "main": "main.js",
@@ -35,5 +35,33 @@
                 }
             }
         ]
-    }
+    },
+
+	"sidebars": [
+		{
+			"id": "pyright.status",
+			"name": "Pyright LSP Server",
+			"smallImage": "logo-small",
+			"smallSelectedImage": "logo-small-selected",
+			"largeImage": "logo-large",
+			"sections": [
+				{
+					"id": "pyright.status-details",
+					"name": "Details",
+					"allowMultiple": false,
+					"headerCommands": [
+						{
+							"title": "Restart",
+							"image": "restart",
+							"tooltip": "Restart the Pyright Language Server",
+							"command": "pyright.status-restart"
+						}
+					]
+				},
+                {
+                    "id": "pyright.update"
+                }
+			]
+		}
+	]
 }
