@@ -16,7 +16,7 @@ exports.activate = async function () {
             alternativePath,
             defaultPath,
         }),
-        validationEnabled = nova.workspace.config.get("pyright.validation_enabled"),
+        validationEnabled: nova.workspace.config.get("pyright.validation_enabled"),
     });
 
     nova.config.observe("pyright.user_path", (userPath) => {
