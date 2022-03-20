@@ -50,12 +50,34 @@ exports.activate = async function () {
         safelyStartServer(langserver);
     })
     
-    nova.commands.register("orderImports", (editor) => {
+    nova.commands.register("orderImports", async (editor) => {
+        const languageClient = langserver.languageClient;
+        const parameters = {
+            command: "pyright.organizeimports",
+            arguments: [editor.document.uri]
+        }
+        let edits = await languageClient.sendRequest("workspace/executeCommand", parameters)
+        console.log(edits) // removethis; I don't quite have much knowledge about what this value looks like
+        if (edits?.length > 0) { 
+            // This 'if' statement is not to make an unneeded edit, 
+            // which supposedly adds to the undo stack.
+            editor.edit((textEditorEdit) => {
+                for (let edit of edits) {
+                    // I know that 'edit' has 
+                    //  edit.range.start.line
+                    //  edit.range.start.character
+                    //  edit.range.end.line
+                    //  edit.range.end.character
 
+                    const range = new Range(start, end);
+                    textEditorEdit.replace(range, edit.newText);
+                }
+            })
+        }
     })
 
     nova.commands.register("addMissingOptionalParam", (editor) => {
-
+        "pyright.addoptionalforparam"
     })
 }
 
