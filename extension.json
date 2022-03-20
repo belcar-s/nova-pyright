@@ -1,7 +1,7 @@
 {
     "identifier": "belcar.pyright",
     "name": "Python+",
-    "description": "A Python extension powered by VSCode's Language Server.",
+    "description": "A Python extension powered by Microsoft's Pyright Language Server.",
     "main": "main.js",
 
     "entitlements": {
