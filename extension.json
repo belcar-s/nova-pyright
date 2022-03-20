@@ -4,7 +4,6 @@
     "description": "A Python extension powered by Microsoft's Pyright Language Server.",
     "main": "main.js",
     "version": "0.1.0",
-
     "entitlements": {
         "process": true,
         "filesystem": "readonly"
@@ -19,33 +18,39 @@
         "completions",
         "commands"
     ],
-
     "commands": {
         "editor": [
             {
                 "title": "Order Imports",
                 "command": "orderImports",
                 "filters": {
-                    "syntaxes": ["python"]
+                    "syntaxes": [
+                        "python"
+                    ]
                 }
             },
             {
                 "title": "Add Missing Optional To Parameter",
                 "command": "addMissingOptionalToParam",
                 "filters": {
-                    "syntaxes": ["python"]
+                    "syntaxes": [
+                        "python"
+                    ]
                 }
-            },
+            }
+        ],
+        "extensions": [
             {
                 "title": "Restart Python Language Server",
                 "command": "restartLanguageServer",
                 "filters": {
-                    "syntaxes": ["python"]
+                    "syntaxes": [
+                        "python"
+                    ]
                 }
             }
         ]
     },
-
     "configWorkspace": [
         {
             "key": "pyright.validation_enabled",
@@ -55,7 +60,6 @@
             "description": "Validate files in this project."
         }
     ],
-
     "config": [
         {
             "key": "pyright.user_path",
@@ -67,32 +71,31 @@
             "required": false
         }
     ],
-
-	"sidebars": [
-		{
-			"id": "pyright.status",
-			"name": "Python Language Server",
-			"smallImage": "logo-small",
-			"smallSelectedImage": "logo-small-selected",
-			"largeImage": "logo-large",
-			"sections": [
-				{
-					"id": "pyright.status-details",
-					"name": "Details",
-					"allowMultiple": false,
-					"headerCommands": [
-						{
-							"title": "Restart",
-							"image": "restart",
-							"tooltip": "Restart the Pyright Language Server",
-							"command": "restartLanguageServer"
-						}
-					]
-				},
+    "sidebars": [
+        {
+            "id": "pyright.status",
+            "name": "Python Language Server",
+            "smallImage": "logo-small",
+            "smallSelectedImage": "logo-small-selected",
+            "largeImage": "logo-large",
+            "sections": [
+                {
+                    "id": "pyright.status-details",
+                    "name": "Details",
+                    "allowMultiple": false,
+                    "headerCommands": [
+                        {
+                            "title": "Restart",
+                            "image": "restart",
+                            "tooltip": "Restart the Pyright Language Server",
+                            "command": "restartLanguageServer"
+                        }
+                    ]
+                },
                 {
                     "id": "pyright.update"
                 }
-			]
-		}
-	]
+            ]
+        }
+    ]
 }
