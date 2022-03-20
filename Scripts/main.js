@@ -73,6 +73,10 @@ function getAppropriatePath({userPath, alternativePath, defaultPath}) {
     }
 }
 
+function which(command) {
+    // run 'which' and get output; ask whether it should be used and request a path if necessary
+}
+
 class PyrightLanguageServer {
     constructor({ path, validationEnabled }) {
         // This value is altered by the 'activate' function, as well
@@ -88,11 +92,12 @@ class PyrightLanguageServer {
             )
         }
 
+        const nodePath = which("node");
         const serverOptions = {
-            args: [],
+            path: nodePath,
+            args: [this.path],
             env: {
             },
-            path: this.path,
             type: "pipe" // I think???
         }
         const clientOptions = {
