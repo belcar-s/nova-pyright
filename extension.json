@@ -38,6 +38,28 @@
         ]
     },
 
+    "configWorkspace": [
+        {
+            "key": "pyright.validation_enabled",
+            "title": "Enable Validation",
+            "type": "Boolean",
+            "default": true,
+            "description": "Validate files in this project."
+        }
+    ],
+
+    "config": [
+        {
+            "key": "pyright.user_path",
+            "title": "Server Location",
+            "type": "path",
+            "placeholder": "Built-in",
+            "description": "Select a JavaScript file; the extension will run it with Node.js.",
+            "allowFolders": false,
+            "required": false
+        }
+    ],
+
 	"sidebars": [
 		{
 			"id": "pyright.status",
