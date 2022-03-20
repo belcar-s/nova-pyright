@@ -49,7 +49,8 @@ exports.activate = async function () {
         langserver.deactivate();
         safelyStartServer(langserver);
     })
-    
+    // if the implementation of both commands ends up being very similar,
+    // i might be able to register them in a more consise 'for' loop.
     nova.commands.register("orderImports", async (editor) => {
         const languageClient = langserver.languageClient;
         const parameters = {
