@@ -6,7 +6,8 @@
     "version": "0.1.0",
 
     "entitlements": {
-        "process": true
+        "process": true,
+        "filesystem": "readonly"
     },
     "activationEvents": [
         "onLanguage:python"
