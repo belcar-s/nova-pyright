@@ -1,6 +1,6 @@
 let langserver = null;
 
-exports.activate = function () {
+exports.activate = async function () {
     const containingFolder = nova.path.join(__dirname, "Pyright Language Server");
     const defaultPath = nova.path.join(containingFolder, "primary", "nodeMain.js");
     // The user can choose to download a more recent version of
@@ -30,7 +30,7 @@ exports.activate = function () {
         langserver = newLangserver
 
         try {
-            langserver.start()
+            await langserver.start()
         } catch (e) {
             handleStartupError(e)
         }
@@ -42,7 +42,7 @@ exports.activate = function () {
     );
 
     try {
-        langserver.start()
+        await langserver.start()
     } catch (e) {
         handleStartupError(e)
     }
@@ -59,11 +59,11 @@ function handleStartupError(error) {
 
 }
 
-function getAppropriatePath({userPath, alternativePath, defaultPath}) {
+function getAppropriatePath({ userPath, alternativePath, defaultPath }) {
     function exists(path) {
         return !!nova.fs.stat(path);
     }
-    
+
     if (userPath) {
         return userPath;
     } else if (exists(alternativePath)) {
@@ -73,8 +73,15 @@ function getAppropriatePath({userPath, alternativePath, defaultPath}) {
     }
 }
 
-function which(command) {
-    // run 'which' and get output; ask whether it should be used and request a path if necessary
+function which(command, shouldNotify = false) {
+    return new Promise((resolve, reject) => {
+        const options = {
+            args: [command],
+            stdio: "pipe"
+        }
+        let process = new Process("/usr/bin/which", options)
+        process.onStdout(resolve)
+    })
 }
 
 class PyrightLanguageServer {
@@ -85,14 +92,14 @@ class PyrightLanguageServer {
         this.path = path;
     }
 
-    start() {
+    async start() {
         if (this.languageClient?.running) {
             throw new AlreadyStartedError(
                 "Cannot start the Language Server; it is already running."
             )
         }
 
-        const nodePath = which("node");
+        const nodePath = await which("node");
         const serverOptions = {
             path: nodePath,
             args: [this.path],
@@ -112,7 +119,7 @@ class PyrightLanguageServer {
             serverOptions,
             clientOptions,
         )
-        
+
         this.languageClient.start()
     }
 
@@ -128,4 +135,4 @@ class PyrightLanguageServer {
     }
 }
 
-class AlreadyStartedError extends Error {}
+class AlreadyStartedError extends Error { }
