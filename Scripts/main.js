@@ -149,9 +149,9 @@ class PyrightLanguageServer {
 
     start() {
         return new Promise((resolve, reject) => {
-            if (this.languageClient?.running) {
+            if (!this.languageClient?.stopping) {
                 throw new AlreadyStartedError(
-                    "Cannot start the Language Server; it is already running."
+                    "Cannot start the Language Server; it is already running, and hasn't been stopped."
                 )
             }
 
@@ -175,7 +175,9 @@ class PyrightLanguageServer {
                 serverOptions,
                 clientOptions,
             )
-
+            // 'stopping' is set to true upon execution
+            // of the 'deactivate' function.
+            this.languageClient.stopping = false
             this.languageClient.onDidStop(reject)
             
             this.languageClient.start();
@@ -184,6 +186,7 @@ class PyrightLanguageServer {
 
     deactivate() {
         this.languageClient.stop();
+        this.languageClient.stopping = true;
     }
 
     changePath(newPath) {
