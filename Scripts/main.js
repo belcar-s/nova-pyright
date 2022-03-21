@@ -148,7 +148,7 @@ class PyrightLanguageServer {
     }
 
     start() {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             if (!this.languageClient?.stopping) {
                 throw new AlreadyStartedError(
                     "Cannot start the Language Server; it is already running, and hasn't been stopped."
