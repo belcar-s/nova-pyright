@@ -47,7 +47,7 @@ exports.activate = async function () {
     // that it does so.
     nova.commands.register("restartLanguageServer", (editor) => {
         langserver.deactivate();
-        safelyStartServer(langserver); // Potential error if langserver takes too long to stop
+        safelyStartServer(langserver);
     })
 
     function getEditingLSPcommandCallback(command) {
