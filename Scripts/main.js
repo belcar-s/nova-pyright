@@ -171,7 +171,7 @@ class PyrightLanguageServer {
             }
             this.languageClient = new LanguageClient(
                 "pyright",
-                "Python+",
+                "Pyright",
                 serverOptions,
                 clientOptions,
             )
