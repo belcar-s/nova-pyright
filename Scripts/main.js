@@ -147,41 +147,41 @@ class PyrightLanguageServer {
         this.path = path;
     }
 
-    start() {
-        return new Promise(async (resolve, reject) => {
-            if (!this.languageClient?.stopping) {
-                throw new AlreadyStartedError(
-                    "Cannot start the Language Server; it is already running, and hasn't been stopped."
-                )
-            }
-
-            const nodePath = await which("node");
-            const serverOptions = {
-                path: nodePath,
-                args: [this.path],
-                env: {
-                },
-                type: "pipe" // I think???
-            }
-            const clientOptions = {
-                initializationOptions: {
-
-                },
-                syntaxes: ["python"]
-            }
-            this.languageClient = new LanguageClient(
-                "pyright",
-                "Pyright",
-                serverOptions,
-                clientOptions,
+    async start() {
+        if (!this.languageClient?.stopping) {
+            throw new AlreadyStartedError(
+                "Cannot start the Language Server; it is already running, and hasn't been stopped."
             )
-            // 'stopping' is set to true upon execution
-            // of the 'deactivate' function.
-            this.languageClient.stopping = false
-            this.languageClient.onDidStop(reject)
-            
-            this.languageClient.start();
-        })
+        }
+
+        const nodePath = await which("node");
+        const serverOptions = {
+            path: nodePath,
+            args: [this.path],
+            env: {
+            },
+            type: "pipe" // I think???
+        }
+        const clientOptions = {
+            initializationOptions: {
+
+            },
+            syntaxes: ["python"]
+        }
+        this.languageClient = new LanguageClient(
+            "pyright",
+            "Pyright",
+            serverOptions,
+            clientOptions,
+        )
+        // 'stopping' is set to true upon execution
+        // of the 'deactivate' function.
+        this.languageClient.stopping = false
+        
+        const onStop = new Promise((resolve, reject) => this.languageClient.onDidStop(reject));
+
+        this.languageClient.start();
+        return onStop;
     }
 
     deactivate() {
