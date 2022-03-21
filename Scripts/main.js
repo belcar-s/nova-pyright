@@ -42,12 +42,12 @@ exports.activate = async function () {
 
     /*
     Commands */
-    // These are registered after the Language Server starts
-    // because the efficacy of most of them relies on that it
-    // does so.
+    // These might not be registered after the Language Server
+    // starts despite the efficacy of most of them relying on 
+    // that it does so.
     nova.commands.register("restartLanguageServer", (editor) => {
         langserver.deactivate();
-        safelyStartServer(langserver);
+        safelyStartServer(langserver); // Potential error if langserver takes too long to stop
     })
 
     function getEditingLSPcommandCallback(command) {
@@ -83,7 +83,7 @@ exports.activate = async function () {
     )
 
     nova.commands.register(
-        "addMissingOptionalParam", 
+        "addMissingOptionalParam",
         getEditingLSPcommandCallback("pyright.addoptionalforparam")
     )
 }
@@ -107,7 +107,11 @@ async function safelyStartServer(langserver) {
 }
 
 function handleStartupError(error) {
+    if (error instanceof AlreadyStartedError) {
+        let request = new NotificationRequest;
 
+        nova.notifications.add(NotificationRequest);
+    }
 }
 
 function getAppropriatePath({ userPath, alternativePath, defaultPath }) {
@@ -143,35 +147,39 @@ class PyrightLanguageServer {
         this.path = path;
     }
 
-    async start() {
-        if (this.languageClient?.running) {
-            throw new AlreadyStartedError(
-                "Cannot start the Language Server; it is already running."
+    start() {
+        return new Promise((resolve, reject) => {
+            if (this.languageClient?.running) {
+                throw new AlreadyStartedError(
+                    "Cannot start the Language Server; it is already running."
+                )
+            }
+
+            const nodePath = await which("node");
+            const serverOptions = {
+                path: nodePath,
+                args: [this.path],
+                env: {
+                },
+                type: "pipe" // I think???
+            }
+            const clientOptions = {
+                initializationOptions: {
+
+                },
+                syntaxes: ["python"]
+            }
+            this.languageClient = new LanguageClient(
+                "pyright",
+                "Python+",
+                serverOptions,
+                clientOptions,
             )
-        }
 
-        const nodePath = await which("node");
-        const serverOptions = {
-            path: nodePath,
-            args: [this.path],
-            env: {
-            },
-            type: "pipe" // I think???
-        }
-        const clientOptions = {
-            initializationOptions: {
-
-            },
-            syntaxes: ["python"]
-        }
-        this.languageClient = new LanguageClient(
-            "pyright",
-            "Python+",
-            serverOptions,
-            clientOptions,
-        )
-
-        await this.languageClient.start();
+            this.languageClient.onDidStop(reject)
+            
+            this.languageClient.start();
+        })
     }
 
     deactivate() {
