@@ -57,7 +57,8 @@ esbuild_addresses = [
     "https://registry.npmjs.org/esbuild-darwin-64/-/esbuild-darwin-64-0.14.24.tgz" # x64
 ]
 esbuild_path = join(parent, "esbuild")
-
+esbuild_archive_path = join(parent, "esbuild.tgz")
+esbuild_extraction = join(parent, "esbuild_temp")
 print("Downloading ESbuild…")
 print("Select architecture 🤖\n" +
       "  1) arm64\n" +
@@ -66,7 +67,14 @@ choice = input("Pick one. > ")
 while choice not in ["1", "2"]:
     choice = input("Type 1 or 2. > ")
 esbuild_address = esbuild_addresses[int(choice) - 1]
-download(esbuild_address, esbuild_path)
+download(esbuild_address, esbuild_extraction)
+
+esbuild_archive = tarfile.open(esbuild_archive_path)
+esbuild_archive.extractAll(esbuild_extraction)
+esbuild_archive.close()
+
+move(join(esbuild_extraction, "bin", "esbuild"), esbuild_path)
+rmtree(esbuild_extraction)
 
 print("Building Pyright…")
 run([
