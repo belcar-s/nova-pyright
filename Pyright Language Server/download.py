@@ -10,7 +10,8 @@ from os import makedirs
 from requests import get
 import tarfile
 parent = dirname(realpath(__file__)) # the "Pyright Language Server" path
-dir = join(parent, "primary")
+outputdir = join(parent, "primary")
+tempdir = join(parent, "temporary_primary") # where the entire Pyright monorepo is extracted
 
 def get_latest_version_URL():
     redirect_link = "https://github.com/microsoft/pyright/releases/latest"
@@ -18,8 +19,9 @@ def get_latest_version_URL():
     return response.url
 address = f"{get_latest_version_URL()}.tar.gz"
 
-if not exists(dir):
-    makedirs(dir)
+for directory in [outputdir, tempdir]:
+    if not exists(directory):
+        makedirs(directory)
 
 r = requests.get(url, stream=True)
 filename = join(parent, "primary.tar.gz")
@@ -31,5 +33,6 @@ else:
     print("Could not download Pyright.")
 
 archive = tarfile.open(filename)
-archive.extractAll(dir)
+archive.extractAll(tempdir)
 archive.close()
+
