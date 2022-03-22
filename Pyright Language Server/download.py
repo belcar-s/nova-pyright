@@ -8,6 +8,7 @@
 from os.path import realpath, dirname, join, exists
 from os import makedirs
 from requests import get
+import tarfile
 parent = dirname(realpath(__file__)) # the "Pyright Language Server" path
 dir = join(parent, "primary")
 
@@ -21,10 +22,14 @@ if not exists(dir):
     makedirs(dir)
 
 r = requests.get(url, stream=True)
+filename = join(parent, "primary.tar.gz")
 if r.ok:
-    filename = join(parent, "primary.tar.gz")
     with open(filename) as f:
         for chunk in r.iter_content(chunk_size=8 * 1000):
             f.write(chunk)
-   
-        
+else:
+    print("Could not download Pyright.")
+
+archive = tarfile.open(filename)
+archive.extractAll(dir)
+archive.close()
