@@ -19,9 +19,7 @@ def get_latest_version_URL():
     return response.url
 address = f"{get_latest_version_URL()}.tar.gz"
 
-for directory in [outputdir, tempdir]:
-    if not exists(directory):
-        makedirs(directory)
+makedirs(*[directory for directory in [outputdir, tempdir] if not exists(directory)])
 
 r = requests.get(url, stream=True)
 filename = join(parent, "primary.tar.gz")
