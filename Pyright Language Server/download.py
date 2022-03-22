@@ -27,7 +27,7 @@ if not exists(extractdir):
 print("Downloading Pyright…")
 def download(url, output_path):
     if not exists(output_path):
-        r = requests.get(url, stream=True)
+        r = get(url, stream=True)
         if r.ok:
             with open(output_path) as f:
                 for chunk in r.iter_content(chunk_size=8 * 1000):
@@ -44,7 +44,8 @@ def download(url, output_path):
         if choice == "N":
             remove(output_path)
             download(url, output_path)
-download(address, join(parent, "primary.tar.gz"))
+archive_path = join(parent, "primary.tar.gz")
+download(address, archive_path)
 
 print("Extracting…")
 archive = tarfile.open(archive_path)
