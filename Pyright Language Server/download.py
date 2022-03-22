@@ -15,11 +15,12 @@ parent = dirname(realpath(__file__)) # the "Pyright Language Server" path
 pyright_path = join(parent, "primary.js")
 extractdir = join(parent, "temporary_primary") # where the Pyright monorepo is extracted
 
-def get_latest_version_URL():
+def get_latest_version_number():
     redirect_link = "https://github.com/microsoft/pyright/releases/latest"
     response = get(redirect_link)
-    return response.url
-address = f"{get_latest_version_URL()}.tar.gz"
+    return response.url.split("/")[-1]
+address = f"https://github.com/microsoft/pyright/archive/refs/tags/{get_latest_version_number()}.tar.gz"
+print(address)
 
 if not exists(extractdir):
     makedirs(extractdir)
@@ -27,13 +28,15 @@ if not exists(extractdir):
 print("Downloading Pyright…")
 def download(url, output_path):
     if not exists(output_path):
+        
         r = get(url, stream=True)
         if r.ok:
-            with open(output_path) as f:
+            with open(output_path, "wb") as f:
                 for chunk in r.iter_content(chunk_size=8 * 1000):
                     f.write(chunk)
         else:
             print("Could not download.")
+            print(r)
             raise Exception()
     else:
         print("This file might have already been downloaded.")
@@ -49,7 +52,7 @@ download(address, archive_path)
 
 print("Extracting…")
 archive = tarfile.open(archive_path)
-archive.extractAll(extractdir)
+archive.extractall(extractdir)
 archive.close()
 remove(archive_path)
 
@@ -68,13 +71,16 @@ choice = input("Pick one. > ")
 while choice not in ["1", "2"]:
     choice = input("Type 1 or 2. > ")
 esbuild_address = esbuild_addresses[int(choice) - 1]
-download(esbuild_address, esbuild_extraction)
+download(esbuild_address, esbuild_archive_path)
+
+if not exists(esbuild_extraction):
+    makedirs(esbuild_extraction)
 
 esbuild_archive = tarfile.open(esbuild_archive_path)
-esbuild_archive.extractAll(esbuild_extraction)
+esbuild_archive.extractall(esbuild_extraction)
 esbuild_archive.close()
 
-move(join(esbuild_extraction, "bin", "esbuild"), esbuild_path)
+move(join(esbuild_extraction, "package", "bin", "esbuild"), esbuild_path)
 rmtree(esbuild_extraction)
 
 print("Building Pyright…")
