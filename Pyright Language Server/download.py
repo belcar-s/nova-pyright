@@ -58,7 +58,8 @@ remove(archive_path)
 
 esbuild_addresses = [
     "https://registry.npmjs.org/esbuild-darwin-arm64/-/esbuild-darwin-arm64-0.14.24.tgz", # arm64
-    "https://registry.npmjs.org/esbuild-darwin-64/-/esbuild-darwin-64-0.14.24.tgz" # x64
+    "https://registry.npmjs.org/esbuild-darwin-64/-/esbuild-darwin-64-0.14.24.tgz", # x64
+  "https://registry.npmjs.org/esbuild-linux-64/-/esbuild-linux-64-0.14.24.tgz"
 ]
 esbuild_path = join(parent, "esbuild")
 esbuild_archive_path = join(parent, "esbuild.tgz")
@@ -68,13 +69,13 @@ print("Select architecture 🤖\n" +
       "  1) arm64\n" +
       "  2) x64")
 choice = input("Pick one. > ")
-while choice not in ["1", "2"]:
+while choice not in ["1", "2", "3"]:
     choice = input("Type 1 or 2. > ")
 esbuild_address = esbuild_addresses[int(choice) - 1]
 download(esbuild_address, esbuild_archive_path)
 
 if not exists(esbuild_extraction):
-    makedirs(esbuild_extraction)
+  makedirs(esbuild_extraction)
 
 esbuild_archive = tarfile.open(esbuild_archive_path)
 esbuild_archive.extractall(esbuild_extraction)
@@ -84,12 +85,20 @@ move(join(esbuild_extraction, "package", "bin", "esbuild"), esbuild_path)
 rmtree(esbuild_extraction)
 
 print("Building Pyright…")
+print("(Installing…)")
+run([
+  "npm",
+  "install"
+],
+  cwd=join(extractdir, "pyright-" + get_latest_version_number(), "packages", "pyright-internal"))
+
+print("(Bundling…)")
 run([
     esbuild_path, 
-    join(extractdir, "packages", "pyright-internal", "src", "nodeMain.ts"),
+    join(extractdir, "pyright-" + get_latest_version_number(), "packages", "pyright-internal", "src", "nodeMain.ts"),
     "--bundle",
-    "--outfile=" + pyright_path
+    "--outfile=" + pyright_path,
+    "--log-level=verbose"
 ])
-rmtree(extractdir)
 
 print("Finished!")
