@@ -72,8 +72,8 @@ pyright_server_path = join(
 )
 
 run([
-  npm_path,
-  "install"
+    npm_path,
+    "install"
 ], cwd=pyright_server_path)
 
 # ======
