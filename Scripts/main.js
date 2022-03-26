@@ -4,10 +4,10 @@ exports.activate = async function () {
     /*
     Language Server */
     const containingFolder = nova.path.join(__dirname, "Pyright Language Server");
-    const defaultPath = nova.path.join(containingFolder, "primary", "nodeMain.js");
+    const defaultPath = nova.path.join(containingFolder, "primary.js");
     // The user can choose to download a more recent version of
     // Pyright through the extension's UI. It is downloaded here. 
-    const alternativePath = nova.path.join(containingFolder, "updated", "nodeMain.js");
+    const alternativePath = nova.path.join(containingFolder, "updated.js");
     const userPath = nova.config.get("pyright.user_path");
 
     langserver = new PyrightLanguageServer({
