@@ -3,13 +3,17 @@
 # This file is not run by the extension. Instead, it is run by
 # me to prepare the extension's publishing in the marketplace.
 
-# It downloads Pyright into this folder.
+# It downloads Pyright into this folder. The filename is 
+# 'primary.js' if no arguments are passed; otherwise, it's 
+# argv[1], which I think is the first argument after the 
+# script's path.
 
 from os.path import realpath, dirname, join, exists
 from os import makedirs, remove
 from requests import get
 from shutil import rmtree, which, copy
 from subprocess import run
+from sys import argv
 import tarfile
 def get_latest_version_number():
     redirect_link = "https://github.com/microsoft/pyright/releases/latest"
@@ -102,7 +106,10 @@ run([
 
 # ======
 print("(Bundling„)")
-pyright_path = join(parentdir_path, "primary.js")
+pyright_path = join(
+    parentdir_path,
+    argv.get(1, "primary.js")
+)
 print([
     join(
         pyright_server_path,
