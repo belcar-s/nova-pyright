@@ -128,8 +128,8 @@ function getAppropriatePath({ userPath, alternativePath, defaultPath }) {
     }
 }
 
-function which(command, shouldNotify = false) {
-    return new Promise((resolve, reject) => {
+function which(command) {
+    return new Promise((resolve) => {
         const options = {
             args: [command],
             stdio: "pipe"
