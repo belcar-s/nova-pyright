@@ -75,7 +75,7 @@
     "sidebars": [
         {
             "id": "pyright.status",
-            "name": "Python Language Server",
+            "name": "Pyright",
             "smallImage": "logo-small",
             "smallSelectedImage": "logo-small-selected",
             "largeImage": "logo-large",
