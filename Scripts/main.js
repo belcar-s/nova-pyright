@@ -34,13 +34,13 @@ exports.activate = async function () {
     /*
     Commands */
     // These might not be registered after the Language Server
-    // starts despite the efficacy of most of them relying on 
+    // starts despite the efficacy of most of them relying on
     // that it does so.
     nova.commands.register("restartLanguageServer", () => {
         if (!langserver.stopped) {
             langserver.deactivate();
         }
-        
+
         langserver.safelyStart();
     })
 
@@ -54,11 +54,11 @@ exports.activate = async function () {
             let edits = await languageClient.sendRequest("workspace/executeCommand", parameters)
             console.log(edits) // removethis; I don't quite have much knowledge about what this value looks like
             if (edits?.length > 0) {
-                // This 'if' statement is not to make an unneeded edit, 
+                // This 'if' statement is not to make an unneeded edit,
                 // which supposedly adds to the undo stack.
                 editor.edit((textEditorEdit) => {
                     for (let edit of edits) {
-                        // I know that 'edit' has 
+                        // I know that 'edit' has
                         //  edit.range.start.line
                         //  edit.range.start.character
                         //  edit.range.end.line
@@ -85,7 +85,7 @@ exports.activate = async function () {
 exports.deactivate = function () {
     // If 'langserver.deactivate' is called before the server
     // starts, an error is sent to Extension Console.
-    
+
     // `langserver.stopped == false` means that the server
     // was started.
     if (langserver && !langserver.stopped) {
@@ -113,10 +113,10 @@ function which(command) {
             args: [command]
         };
         let process = new Process("/usr/bin/which", options);
-        process.onStdout((line) => 
+        process.onStdout((line) =>
             // The value ends with a newline,
             // which we need to remove.
-            resolve(line.trim()) 
+            resolve(line.trim())
         );
         process.start()
     })
@@ -137,7 +137,7 @@ class PyrightLanguageServer {
                 nova.notifications.add(request);
             }
         }
-        
+
         try {
             await this.start()
         } catch (e) {
@@ -172,7 +172,7 @@ class PyrightLanguageServer {
             serverOptions,
             clientOptions,
         )
-        
+
         const onStop = new Promise((_resolve, reject) => this.languageClient.onDidStop(reject));
 
         console.log("Starting Pyright…")
@@ -189,7 +189,7 @@ class PyrightLanguageServer {
     setPath(path) {
         this.path = path
         if (!this.stopped) {
-            this.deactivate();  
+            this.deactivate();
             this.safelyStart();
         }
     }
