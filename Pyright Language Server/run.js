@@ -4,8 +4,9 @@
 // function. Calling the function starts the server —not just
 // executing the file.
 
-// The extension runs this file with Node.js, and passes a path
-// as an argument.
+// The extension runs this file with Node.js, and passes:
+//     1) a path
+//     2) '--stdio'
 
 const args = process.argv.slice(2)
 
