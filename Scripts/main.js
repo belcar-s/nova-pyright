@@ -4,50 +4,42 @@ exports.activate = async function () {
     /*
     Language Server */
     const containingFolder = nova.path.join(__dirname, "Pyright Language Server");
-    const defaultPath = nova.path.join(containingFolder, "primary.js");
+    const defaultPath = nova.path.join(containingFolder, "primary", "out", "src","nodeMain.js");
     // The user can choose to download a more recent version of
     // Pyright through the extension's UI. It is downloaded here. 
-    const alternativePath = nova.path.join(containingFolder, "updated.js");
-    const userPath = nova.config.get("pyright.user_path");
+    const alternativePath = nova.path.join(containingFolder, "updated", "out", "src", "nodeMain.js");
 
-    langserver = new PyrightLanguageServer({
-        path: getAppropriatePath({
-            userPath,
-            alternativePath,
-            defaultPath,
-        }),
-        validationEnabled: nova.workspace.config.get("pyright.validation_enabled"),
+    const runnerPath = nova.path.join(containingFolder, "run.js");
+
+    langserver = new PyrightLanguageServer();
+
+    langserver.runnerPath = runnerPath;
+    nova.config.observe("pyright.user_path", (userPath) => {
+        langserver.setPath(
+            getAppropriatePath({
+                userPath,
+                alternativePath,
+                defaultPath,
+            })
+        )
+    });
+    nova.workspace.config.observe("pyright.validation_enabled", (isEnabled) => {
+        langserver.validationEnabled = isEnabled;
     });
 
-    nova.config.observe("pyright.user_path", (userPath) => {
-        let newLangserver =
-            langserver.changePath(
-                getAppropriatePath({
-                    userPath,
-                    alternativePath,
-                    defaultPath,
-                })
-            )
-        langserver.deactivate()
-        langserver = newLangserver
-        safelyStartServer(langserver)
-    })
-    nova.workspace.config.observe("pyright.validation_enabled",
-        (isEnabled) => {
-            langserver.validationEnabled = isEnabled;
-        }
-    );
-
-    safelyStartServer(langserver);
+    langserver.safelyStart();
 
     /*
     Commands */
     // These might not be registered after the Language Server
     // starts despite the efficacy of most of them relying on 
     // that it does so.
-    nova.commands.register("restartLanguageServer", (editor) => {
-        langserver.deactivate();
-        safelyStartServer(langserver);
+    nova.commands.register("restartLanguageServer", () => {
+        if (!langserver.stopped) {
+            langserver.deactivate();
+        }
+        
+        langserver.safelyStart();
     })
 
     function getEditingLSPcommandCallback(command) {
@@ -89,28 +81,13 @@ exports.activate = async function () {
 }
 
 exports.deactivate = function () {
-    // 'langserver' supposedly might be null if the 'activate' function
-    // hasn't been completely run. In that case, of course, calls to
-    // 'langserver' methods will fail. The consequence is supposedly
-    // a bothersome error message.
-    if (langserver) {
+    // If 'langserver.deactivate' is called before the server
+    // starts, an error is sent to Extension Console.
+    
+    // `langserver.stopped == false` means that the server
+    // was started.
+    if (langserver && !langserver.stopped) {
         langserver.deactivate();
-    }
-}
-
-async function safelyStartServer(langserver) {
-    try {
-        await langserver.start()
-    } catch (e) {
-        handleStartupError(e)
-    }
-}
-
-function handleStartupError(error) {
-    if (error instanceof AlreadyStartedError) {
-        let request = new NotificationRequest;
-
-        nova.notifications.add(NotificationRequest);
     }
 }
 
@@ -131,33 +108,54 @@ function getAppropriatePath({ userPath, alternativePath, defaultPath }) {
 function which(command) {
     return new Promise((resolve) => {
         const options = {
-            args: [command],
-            stdio: "pipe"
-        }
-        let process = new Process("/usr/bin/which", options)
-        process.onStdout(resolve)
+            args: [command]
+        };
+        let process = new Process("/usr/bin/which", options);
+        process.onStdout(resolve);
+        process.start()
     })
 }
 
 class PyrightLanguageServer {
-    constructor({ path, validationEnabled }) {
-        // This value is altered by the 'activate' function, as well
-        // as configuration changes. 
-        this.validationEnabled = validationEnabled;
-        this.path = path;
+    constructor() {
+        // The server is stopped initially.
+        this.stopped = true;
+    }
+
+    async safelyStart() {
+        function handleStartupError(error) {
+            if (error instanceof AlreadyStartedError) {
+                let request = new NotificationRequest;
+                request.title = nova.localize("Could not start the Pyright Language Server")
+                request.body = nova.localize(error.message)
+                nova.notifications.add(request);
+            }
+        }
+        
+        try {
+            await this.start()
+        } catch (e) {
+            handleStartupError(e)
+        }
     }
 
     async start() {
-        if (!this.languageClient?.stopping) {
+        if (this.languageClient && !this.languageClient.stopped) {
             throw new AlreadyStartedError(
                 "Cannot start the Language Server; it is already running, and hasn't been stopped."
             )
         }
+        // 'stopped' is set to true upon execution
+        // of the 'deactivate' function.
+        this.stopped = false
 
         const nodePath = await which("node");
+        console.log(nodePath)
+        console.log(this.path)
+        
         const serverOptions = {
             path: nodePath,
-            args: [this.path],
+            args: [this.runnerPath, this.path],
             env: {
             },
             type: "pipe" // I think???
@@ -174,26 +172,26 @@ class PyrightLanguageServer {
             serverOptions,
             clientOptions,
         )
-        // 'stopping' is set to true upon execution
-        // of the 'deactivate' function.
-        this.languageClient.stopping = false
         
-        const onStop = new Promise((resolve, reject) => this.languageClient.onDidStop(reject));
+        const onStop = new Promise((_resolve, reject) => this.languageClient.onDidStop(reject));
 
+        console.log("Starting Pyright…")
         this.languageClient.start();
+        console.log("Running:" + this.languageClient.running)
         return onStop;
     }
 
     deactivate() {
         this.languageClient.stop();
-        this.languageClient.stopping = true;
+        this.languageClient.stopped = true;
     }
 
-    changePath(newPath) {
-        return new PyrightLanguageServer({
-            path: newPath,
-            validationEnabled: this.validationEnabled
-        })
+    setPath(path) {
+        this.path = path
+        if (!this.stopped) {
+            this.deactivate();   
+            this.safelyStart();
+        }
     }
 }
 

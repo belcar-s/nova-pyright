@@ -11,7 +11,7 @@
 from os.path import realpath, dirname, join, exists
 from os import makedirs, remove
 from requests import get
-from shutil import rmtree, which, copy
+from shutil import rmtree, which, copy, copytree
 from subprocess import run
 from sys import argv
 import tarfile
@@ -87,53 +87,11 @@ run([
     "run",
     "build"
 ], cwd=pyright_server_path)
-# ======
-# I don't know the meaning of that this
-# needs to be done. I hope it's OK but
-# I have no judgement
-print("(Doing something ugly…)")
-copy(
-    join(pyright_server_path, "package.json"),
-    join(pyright_server_path, "out"),
-)
 
-# ======
-run([
-    npm_path,
-    "install",
-    "esbuild"
-], cwd=pyright_server_path)
-
-# ======
-print("(Bundling„)")
-pyright_path = join(
-    parentdir_path,
-    argv.get(1, "primary.js")
-)
-print([
-    join(
-        pyright_server_path,
-        "node_modules",
-        ".bin",
-        "esbuild"
-    ),
-    join(pyright_server_path, "out", "src", "nodeMain.js"),
-    "--bundle",
-    "outfile="+pyright_path,
-    "--platform=node"
-])
-run([
-    join(
-        pyright_server_path,
-        "node_modules",
-        ".bin",
-        "esbuild"
-    ),
-    join(pyright_server_path, "out", "src", "nodeMain.js"),
-    "--bundle",
-    "--outfile="+pyright_path,
-    "--platform=node"
-])
+destination_path = join(parentdir_path, "primary")
+if exists(destination_path):
+    rmtree(destination_path)
+copytree(pyright_server_path, destination_path)
 
 rmtree(extractdir_path)
 

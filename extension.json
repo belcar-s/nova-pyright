@@ -1,6 +1,7 @@
 {
     "identifier": "belcar.pyright",
     "name": "Pyright",
+    "organization": "belcar-s",
     "description": "A Python extension powered by Microsoft's Pyright Language Server.",
     "main": "main.js",
     "version": "0.1.0",
@@ -41,7 +42,7 @@
         ],
         "extensions": [
             {
-                "title": "Restart Python Language Server",
+                "title": "Restart Server (Pyright)",
                 "command": "restartLanguageServer",
                 "filters": {
                     "syntaxes": [
