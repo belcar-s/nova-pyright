@@ -113,7 +113,11 @@ function which(command) {
             args: [command]
         };
         let process = new Process("/usr/bin/which", options);
-        process.onStdout(resolve);
+        process.onStdout((line) => 
+            // The value ends with a newline,
+            // which we need to remove.
+            resolve(line.trim()) 
+        );
         process.start()
     })
 }
