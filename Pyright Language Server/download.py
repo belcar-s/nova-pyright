@@ -3,7 +3,7 @@
 # This file is not run by the extension. Instead, it is run by
 # me to prepare the extension's publishing in the marketplace.
 
-# It downloads Pyright into this folder. The folder name is 
+# It downloads Pyright into this folder. The folder name is
 # 'primary' if no arguments are passed; otherwise, it's argv[1],
 # which I think is the first argument after the script's path.
 
@@ -91,7 +91,7 @@ destination_dirname = None
 if len(argv) > 3:
     destination_dirname = argv[2]
 else:
-    destination_dirname = "primary"    
+    destination_dirname = "primary"
 print(destination_dirname)
 
 destination_path = join(parentdir_path, destination_dirname)
