@@ -154,10 +154,7 @@ class PyrightLanguageServer {
         this.stopped = false
 
         const nodePath = await which("node");
-        
-        console.log(nodePath)
-        console.log(this.runnerPath)
-        console.log(this.path)
+
         const serverOptions = {
             path: nodePath,
             args: [this.runnerPath, this.path, "--stdio"],
@@ -175,9 +172,7 @@ class PyrightLanguageServer {
 
         const onStop = new Promise((_resolve, reject) => this.languageClient.onDidStop(reject));
 
-        console.log("Starting Pyright…")
         this.languageClient.start();
-        console.log("Running: " + this.languageClient.running)
         return onStop;
     }
 
