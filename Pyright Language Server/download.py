@@ -101,4 +101,17 @@ copytree(pyright_server_path, destination_path)
 
 rmtree(extractdir_path)
 
+# ======
+print("(Doing something confusing…)")
+# The 'server.js' file includes a call to 'require'
+# with a path to a non-existent package.json. By
+# moving the folder, the call succeeds. If this step
+# is omitted, the server crashes immediately upon
+# execution.
+
+move(
+    join(destination_path, "out", "src"),
+    join(destination_path, "built")
+)
+
 print("Finished!")
