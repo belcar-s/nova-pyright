@@ -87,7 +87,14 @@ run([
     "build"
 ], cwd=pyright_server_path)
 
-destination_path = join(parentdir_path, "primary")
+destination_dirname = None
+if len(argv) > 3:
+    destination_dirname = argv[2]
+else:
+    destination_dirname = "primary"    
+print(destination_dirname)
+
+destination_path = join(parentdir_path, destination_dirname)
 if exists(destination_path):
     rmtree(destination_path)
 copytree(pyright_server_path, destination_path)
