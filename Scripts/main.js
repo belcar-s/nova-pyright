@@ -151,25 +151,19 @@ class PyrightLanguageServer {
                 "Cannot start the Language Server; it is already running, and hasn't been stopped."
             )
         }
-        // 'stopped' is set to true upon execution
-        // of the 'deactivate' function.
         this.stopped = false
 
         const nodePath = await which("node");
-        console.log(nodePath)
-        console.log(this.path)
         
+        console.log(nodePath)
+        console.log(this.runnerPath)
+        console.log(this.path)
         const serverOptions = {
             path: nodePath,
-            args: [this.runnerPath, this.path],
-            env: {
-            },
-            type: "pipe" // I think???
+            args: [this.runnerPath, this.path, "--stdio"],
+            type: "stdio"
         }
         const clientOptions = {
-            initializationOptions: {
-
-            },
             syntaxes: ["python"]
         }
         this.languageClient = new LanguageClient(
@@ -183,7 +177,7 @@ class PyrightLanguageServer {
 
         console.log("Starting Pyright…")
         this.languageClient.start();
-        console.log("Running:" + this.languageClient.running)
+        console.log("Running: " + this.languageClient.running)
         return onStop;
     }
 
@@ -195,7 +189,7 @@ class PyrightLanguageServer {
     setPath(path) {
         this.path = path
         if (!this.stopped) {
-            this.deactivate();   
+            this.deactivate();  
             this.safelyStart();
         }
     }
