@@ -3,15 +3,14 @@
 # This file is not run by the extension. Instead, it is run by
 # me to prepare the extension's publishing in the marketplace.
 
-# It downloads Pyright into this folder. The filename is 
-# 'primary.js' if no arguments are passed; otherwise, it's 
-# argv[1], which I think is the first argument after the 
-# script's path.
+# It downloads Pyright into this folder. The folder name is 
+# 'primary' if no arguments are passed; otherwise, it's argv[1],
+# which I think is the first argument after the script's path.
 
 from os.path import realpath, dirname, join, exists
 from os import makedirs, remove
 from requests import get
-from shutil import rmtree, which, copy, copytree
+from shutil import rmtree, which, copy, copytree, move
 from subprocess import run
 from sys import argv
 import tarfile
