@@ -10,7 +10,7 @@
 from os.path import realpath, dirname, join, exists
 from os import makedirs, remove
 from requests import get
-from shutil import rmtree, which, copy, copytree, move
+from shutil import rmtree, which, copytree, move
 from subprocess import run
 from sys import argv
 import tarfile
