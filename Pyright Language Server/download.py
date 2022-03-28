@@ -1,7 +1,8 @@
 # Download Script
 # =====
-# This file is not run by the extension. Instead, it is run by
-# me to prepare the extension's publishing in the marketplace.
+# This file is run by me to prepare the extension's publishing
+# in the marketplace. It is also run by the extension to upgrade
+# the bundled version of Pyright.
 
 # It downloads Pyright into this folder. The folder name is
 # 'primary' if no arguments are passed; otherwise, it's argv[1],
