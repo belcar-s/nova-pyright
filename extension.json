@@ -94,7 +94,9 @@
                     ]
                 },
                 {
-                    "id": "pyright.update"
+                    "id": "pyright.update",
+                    "name": "Update",
+                    "allowMultiple": false
                 }
             ]
         }

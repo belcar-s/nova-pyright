@@ -42,7 +42,7 @@ exports.activate = async function () {
         }
 
         langserver.safelyStart();
-    })
+    });
 
     function getEditingLSPcommandCallback(command) {
         return async (editor) => {
@@ -74,12 +74,20 @@ exports.activate = async function () {
     nova.commands.register(
         "orderImports",
         getEditingLSPcommandCallback("pyright.organizeimports")
-    )
+    );
 
     nova.commands.register(
         "addMissingOptionalParam",
         getEditingLSPcommandCallback("pyright.addoptionalforparam")
-    )
+    );
+
+    /*
+    Sidebar */
+    let treeView = new TreeView("pyright.status-details", {
+        dataProvider: new StatusDataProvider()
+    });
+
+    nova.subscriptions.add(treeView); // (?) The use of this isn't obvious to me
 }
 
 exports.deactivate = function () {
@@ -118,7 +126,7 @@ function which(command) {
             // which we need to remove.
             resolve(line.trim())
         );
-        process.start()
+        process.start();
     })
 }
 
@@ -191,3 +199,32 @@ class PyrightLanguageServer {
 }
 
 class AlreadyStartedError extends Error { }
+
+/*
+More sidebar */
+class StatusDataProvider {
+    getChildren(element) {
+        if (element == null) {
+            return [
+                {
+                    name: "Status",
+                    value: langserver.stopped ? "Stopped" : "Running",
+                },
+                {
+                    name: "Version",
+                    value: "Unknown"
+                }
+            ];
+        }
+    }
+
+    // getParent(element) {
+        // Optional
+    // }
+
+    getTreeItem({name, value}) {
+        let item = new TreeItem(name);
+        item.descriptiveText = value;
+        return item;
+    }
+}
