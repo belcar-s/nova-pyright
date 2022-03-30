@@ -3,7 +3,7 @@ The downloader script downloads Pyright into this folder. The extension is effec
 
 The downloader script requires `requests` —a Python module. To install `requests`, run
 ```sh
-python3 -m install requests
+python3 -m pip install requests
 ```
 
 It also requires NPM. 
