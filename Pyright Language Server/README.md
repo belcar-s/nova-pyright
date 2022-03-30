@@ -6,4 +6,4 @@ The downloader script requires `requests` —a Python module. To install `reques
 python3 -m pip install requests
 ```
 
-It also requires NPM. 
+It also requires NPM.
