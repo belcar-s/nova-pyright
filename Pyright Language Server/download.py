@@ -20,8 +20,6 @@ def get_latest_version_number():
     response = get(redirect_link)
     return response.url.split("/")[-1]
 
-isatty = stdout.isatty()
-
 parentdir_path = dirname(realpath(__file__)) # the "Pyright Language Server" path
 pyright_version = get_latest_version_number()
 
@@ -39,15 +37,8 @@ def download(url, output_path):
             print(r)
             raise Exception()
     else:
-        choice = "N"
-        if isatty:
-            print("This file might have already been downloaded.")
-            choice = input(f"Use existing file? Y/N >").upper()
-            while choice not in ["Y", "N"]:
-                choice = input("Type Y or N. >").upper()
-        if choice == "N":
-            remove(output_path)
-            download(url, output_path)
+        remove(output_path)
+        download(url, output_path)
 archive_path = join(parentdir_path, "primary.tar.gz")
 address = f"https://github.com/microsoft/pyright/archive/refs/tags/{pyright_version}.tar.gz"
 download(address, archive_path)
@@ -68,11 +59,6 @@ print("Building Pyright…")
 # ======
 print("(Installing Pyright dependencies…)")
 npm_path = which("npm")
-if not npm_path:
-    if isatty:
-        npm_path = input("Please enter NPM's path >")
-    else:
-        raise Exception()
 
 pyright_server_path = join(
     extractdir_path,
