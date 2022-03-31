@@ -1,6 +1,8 @@
 const CONFIG_KEY = "pyright.user_path";
 const parentDirectoryPath = nova.path.normalize(nova.path.join(__dirname, "..", "Pyright Language Server"));
 
+exports.runnerPath = nova.path.join(parentDirectoryPath, "run.js");
+
 function getServerPath(name) {
 	return nova.path.join(
 		parentDirectoryPath,
@@ -9,9 +11,6 @@ function getServerPath(name) {
 		"nodeMain.js", // Entrypoint
 	);
 }
-
-exports.runnerPath = nova.path.join(parentDirectoryPath, "run.js");
-
 exports.serverPaths = () => ({
 	// Default Path
 	primary: getServerPath("primary"),
@@ -24,3 +23,4 @@ exports.serverPaths = () => ({
 });
 
 exports.USER_PATH_CONFIG_KEY = CONFIG_KEY;
+exports.downloaderPath = nova.path.join(parentDirectoryPath, "download.py");

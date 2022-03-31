@@ -43,12 +43,11 @@
         "extensions": [
             {
                 "title": "Restart Server (Pyright)",
-                "command": "restartLanguageServer",
-                "filters": {
-                    "syntaxes": [
-                        "python"
-                    ]
-                }
+                "command": "restartLanguageServer"
+            },
+            {
+                "title": "Update Server (Pyright)",
+                "command": "updateLanguageServer"
             }
         ]
     },

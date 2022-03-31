@@ -5,6 +5,7 @@ const {
 } = require("./paths.js");
 const { StatusDataProvider } = require("./StatusDataProvider.js");
 const { PyrightLanguageServer } = require("./PyrightLanguageServer.js");
+const { downloadLanguageServer } = require("./download.js");
 
 exports.activate = async function () {
 	// This function loads the sidebar. It then returns
@@ -99,5 +100,9 @@ function registerCommands(server, dataProvider) {
 	nova.commands.register("restartLanguageServer", () => {
 		server.deactivate();
 		loadLanguageServer(server, dataProvider);
+	});
+
+	nova.commands.register("updateLanguageServer", () => {
+		downloadLanguageServer("updated");
 	});
 }
