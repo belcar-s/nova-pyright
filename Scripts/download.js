@@ -7,18 +7,22 @@ exports.downloadLanguageServer = (name) => {
 	const options = {
 		args: ["python3", downloaderPath, name]
 	};
+
 	const process = new Process("/usr/bin/env", options);
+	process.onStdout(line => {
+		console.warn("HI????");
+		console.warn(line);
+	});
 
 	const onExit = new Promise((resolve, reject) => {
 		process.onDidExit(status => {
+			console.warn("Exitted; status " + status);
+			// reject when non-zero; resolve otherwise
 			const action = (status == 0) ? resolve : reject;
 			action(status);
 		});
 	});
 
-	process.onStdout(line => {
-		console.warn(line);
-	});
 	process.start();
 	return onExit;
 };

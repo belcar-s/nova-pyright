@@ -72,6 +72,7 @@ class PyrightLanguageServer {
 	}
 
 	deactivate() {
+		console.log("Bye; sorry to have bothered. I'm stopping the server.");
 		this.languageClient.stop();
 		this.stopped = true;
 	}

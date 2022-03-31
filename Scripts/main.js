@@ -13,8 +13,8 @@ exports.activate = async function () {
 	// status information on the sidebar.
 	const dataProvider = loadSidebar();
 
-	let languageServer;
-	nova.config.observe(USER_PATH_CONFIG_KEY, () => {
+	let languageServer = null;
+	function restartServer() {
 		if (languageServer) {
 			languageServer.deactivate();
 		}
@@ -31,9 +31,10 @@ exports.activate = async function () {
 
 		// load it :)
 		loadLanguageServer(languageServer, dataProvider);
-	});
+	}
+	nova.config.observe(USER_PATH_CONFIG_KEY, restartServer);
 
-	registerCommands(languageServer, dataProvider);
+	registerCommands(languageServer, dataProvider, restartServer);
 };
 
 function loadSidebar() {
@@ -94,25 +95,42 @@ function loadLanguageServer(server, dataProvider) {
 
 	// (?) I'm unsure of whether this is a good idea :)
 	setInterval(() => {
+		console.warn("Reloading TreeView: " + String(Date.now()).slice(9));
 		if (server.languageClient?.running) {
 			dataProvider.updateStatus(nova.localize("Running"));
 		} else {
 			dataProvider.updateStatus(nova.localize("Stopped"));
 		}
-	}, 2000);
+	}, 1000);
 }
-function registerCommands(server, dataProvider) {
+function registerCommands(server, dataProvider, restartServer) {
 	nova.commands.register("restartLanguageServer", () => {
 		server.deactivate();
 		loadLanguageServer(server, dataProvider);
 	});
 
+	let isDownloading = false;
 	nova.commands.register("updateLanguageServer", async () => {
+		if (isDownloading) {
+			let alreadyStartedNotificationRequest = new NotificationRequest;
+			alreadyStartedNotificationRequest.title =
+				nova.localize("Cannot Download Right Now");
+			alreadyStartedNotificationRequest.body =
+				nova.localize("Pyright is already being downloaded.");
+
+			return;
+		}
+
+		isDownloading = true;
+
 		// provide an immediate reaction
 		let initialNotificationRequest = new NotificationRequest;
-		initialNotificationRequest.title = nova.localize("Downloading");
+		initialNotificationRequest.title =
+			nova.localize("Downloading");
 		initialNotificationRequest.body =
-			nova.localize("The latest version of Pyright is being downloaded.");
+			nova.localize(
+				"The latest version of Pyright is being downloaded."
+			);
 		nova.notifications.add(initialNotificationRequest);
 
 		// actually download
@@ -133,11 +151,19 @@ function registerCommands(server, dataProvider) {
 			nova.notifications.add(errorNotificationRequest);
 		}
 
+		isDownloading = false;
+
 		// notify of completion
 		let completionNotificationRequest = new NotificationRequest;
-		completionNotificationRequest.title = nova.localize("Download Completed");
+		completionNotificationRequest.title =
+			nova.localize("Download Completed");
 		completionNotificationRequest.body =
-			nova.localize("The latest version of Pyright was downloaded.");
+			nova.localize(
+				"The latest version of Pyright was downloaded."
+			);
 		nova.notifications.add(completionNotificationRequest);
+
+		// restart Language Server
+		restartServer();
 	});
 }
