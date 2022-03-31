@@ -56,7 +56,7 @@
         {
             "key": "pyright.validation_enabled",
             "title": "Enable Validation",
-            "type": "Boolean",
+            "type": "boolean",
             "default": true,
             "description": "Validate files in this project."
         }
