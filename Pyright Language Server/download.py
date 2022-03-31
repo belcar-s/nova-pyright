@@ -13,12 +13,14 @@ from os import makedirs, remove
 from requests import get
 from shutil import rmtree, which, copytree, move
 from subprocess import run
-from sys import argv
+from sys import argv, stdout
 import tarfile
 def get_latest_version_number():
     redirect_link = "https://github.com/microsoft/pyright/releases/latest"
     response = get(redirect_link)
     return response.url.split("/")[-1]
+
+isatty = stdout.isatty()
 
 parentdir_path = dirname(realpath(__file__)) # the "Pyright Language Server" path
 pyright_version = get_latest_version_number()
@@ -37,11 +39,12 @@ def download(url, output_path):
             print(r)
             raise Exception()
     else:
-        print("This file might have already been downloaded.")
-        choice = input(f"Use existing file? Y/N >").upper()
-        while choice not in ["Y", "N"]:
-            choice = input("Type Y or N. >").upper()
-
+        choice = "N"
+        if isatty:
+            print("This file might have already been downloaded.")
+            choice = input(f"Use existing file? Y/N >").upper()
+            while choice not in ["Y", "N"]:
+                choice = input("Type Y or N. >").upper()
         if choice == "N":
             remove(output_path)
             download(url, output_path)
@@ -66,7 +69,10 @@ print("Building Pyright…")
 print("(Installing Pyright dependencies…)")
 npm_path = which("npm")
 if not npm_path:
-    npm_path = input("Please enter NPM's path >")
+    if isatty:
+        npm_path = input("Please enter NPM's path >")
+    else:
+        raise Exception()
 
 pyright_server_path = join(
     extractdir_path,
