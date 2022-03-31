@@ -1,230 +1,103 @@
-let langserver = null;
+const {
+	serverPaths,
+	runnerPath,
+	USER_PATH_CONFIG_KEY
+} = require("./paths.js");
+const { StatusDataProvider } = require("./StatusDataProvider.js");
+const { PyrightLanguageServer } = require("./PyrightLanguageServer.js");
 
 exports.activate = async function () {
-    /*
-    Language Server */
-    const containingFolder = nova.path.normalize(
-        nova.path.join(__dirname, "..", "Pyright Language Server")
-    );
-    const defaultPath = nova.path.join(containingFolder, "primary", "built", "nodeMain.js");
-    // The user can choose to download a more recent version of
-    // Pyright through the extension's UI. It is downloaded here.
-    const alternativePath = nova.path.join(containingFolder, "updated", "built", "nodeMain.js");
+	// This function loads the sidebar. It then returns
+	// a StatusDataProvider, which is used to update
+	// status information on the sidebar.
+	const dataProvider = loadSidebar();
 
-    const runnerPath = nova.path.join(containingFolder, "run.js");
+	let languageServer;
+	nova.config.observe(USER_PATH_CONFIG_KEY, () => {
+		if (languageServer) {
+			languageServer.deactivate();
+		}
 
-    langserver = new PyrightLanguageServer();
+		// This is run immediately and once. Later, it
+		// may be run upon changes to the user's path
+		// setting.
 
-    langserver.runnerPath = runnerPath;
-    nova.config.observe("pyright.user_path", (userPath) => {
-        langserver.setPath(
-            getAppropriatePath({
-                userPath,
-                alternativePath,
-                defaultPath,
-            })
-        )
-    });
-    nova.workspace.config.observe("pyright.validation_enabled", (isEnabled) => {
-        langserver.validationEnabled = isEnabled;
-    });
+		// create server object
+		languageServer = new PyrightLanguageServer({
+			serverPaths: serverPaths(),
+			runnerPath,
+		});
 
-    langserver.safelyStart();
+		// load it :)
+		loadLanguageServer(languageServer, dataProvider);
+	});
 
-    /*
-    Commands */
-    // These might not be registered after the Language Server
-    // starts despite the efficacy of most of them relying on
-    // that it does so.
-    nova.commands.register("restartLanguageServer", () => {
-        if (!langserver.stopped) {
-            langserver.deactivate();
-        }
+	registerCommands(languageServer, dataProvider);
+};
 
-        langserver.safelyStart();
-    });
+function loadSidebar() {
+	const SECTION_ID = "pyright.status-details";
 
-    function getEditingLSPcommandCallback(command) {
-        return async (editor) => {
-            const languageClient = langserver.languageClient;
-            const parameters = {
-                command,
-                arguments: [editor.document.uri]
-            }
-            let edits = await languageClient.sendRequest("workspace/executeCommand", parameters)
-            console.log(edits) // removethis; I don't quite have much knowledge about what this value looks like
-            if (edits?.length > 0) {
-                // This 'if' statement is not to make an unneeded edit,
-                // which supposedly adds to the undo stack.
-                editor.edit((textEditorEdit) => {
-                    for (let edit of edits) {
-                        // I know that 'edit' has
-                        //  edit.range.start.line
-                        //  edit.range.start.character
-                        //  edit.range.end.line
-                        //  edit.range.end.character
+	const dataProvider = new StatusDataProvider();
+	const treeView = new TreeView(SECTION_ID, { dataProvider });
+	dataProvider.treeView = treeView;
 
-                        const range = new Range(start, end);
-                        textEditorEdit.replace(range, edit.newText);
-                    }
-                })
-            }
-        }
-    }
-    nova.commands.register(
-        "orderImports",
-        getEditingLSPcommandCallback("pyright.organizeimports")
-    );
+	// (?) The use of this is unknown to me.
+	nova.subscriptions.add(treeView);
 
-    nova.commands.register(
-        "addMissingOptionalParam",
-        getEditingLSPcommandCallback("pyright.addoptionalforparam")
-    );
-
-    /*
-    Sidebar */
-    let treeView = new TreeView("pyright.status-details", {
-        dataProvider: new StatusDataProvider()
-    });
-
-    nova.subscriptions.add(treeView); // (?) The use of this isn't obvious to me
+	return dataProvider;
 }
+function loadLanguageServer(server, dataProvider) {
+	function loadJSON(path) {
+		const file = nova.fs.open(path);
+		const lines = file.readlines();
+		const contents = lines.join("\n");
+		return JSON.parse(contents);
+	}
 
-exports.deactivate = function () {
-    // If 'langserver.deactivate' is called before the server
-    // starts, an error is sent to Extension Console.
+	// the Pyright server's `package.json` file, decoded
+	const serverPackageJSON = loadJSON(
+		nova.path.normalize(nova.path.join(
+			server.path, // the server's entry point
+			"..",
+			"..",
+			"package.json"
+		))
+	);
 
-    // `langserver.stopped == false` means that the server
-    // was started.
-    if (langserver && !langserver.stopped) {
-        langserver.deactivate();
-    }
+	dataProvider.updateStatus(nova.localize("Starting…"));
+	dataProvider.updateVersion(serverPackageJSON.version);
+
+	server.start().catch(e => {
+		// This function is run after the server quits.
+		dataProvider.updateStatus(nova.localize("Stopped"));
+
+		// inform the user of the error
+		const notificationRequest = new NotificationRequest;
+		notificationRequest.title = nova.localize("Pyright Language Server Stopped");
+
+		// obtain the notification's body, which depends
+		// on the cause of the error
+
+		if (e /*has x quality*/) {
+			/* do y thing */
+		} else if (e.yy /* has z quality*/) {
+			/* do ☈ thing */
+		}
+	});
+
+	// (?) I'm unsure of whether this is a good idea :)
+	setInterval(() => {
+		if (server.languageClient?.running) {
+			dataProvider.updateStatus(nova.localize("Running"));
+		} else {
+			dataProvider.updateStatus(nova.localize("Stopped"));
+		}
+	}, 2000);
 }
-
-function getAppropriatePath({ userPath, alternativePath, defaultPath }) {
-    function exists(path) {
-        return !!nova.fs.stat(path);
-    }
-
-    if (userPath) {
-        return userPath;
-    } else if (exists(alternativePath)) {
-        return alternativePath;
-    } else {
-        return defaultPath;
-    }
-}
-
-function which(command) {
-    return new Promise((resolve) => {
-        const options = {
-            args: [command]
-        };
-        let process = new Process("/usr/bin/which", options);
-        process.onStdout((line) =>
-            // The value ends with a newline,
-            // which we need to remove.
-            resolve(line.trim())
-        );
-        process.start();
-    })
-}
-
-class PyrightLanguageServer {
-    constructor() {
-        // The server is stopped initially.
-        this.stopped = true;
-    }
-
-    async safelyStart() {
-        function handleStartupError(error) {
-            if (error instanceof AlreadyStartedError) {
-                let request = new NotificationRequest;
-                request.title = nova.localize("Could not start the Pyright Language Server")
-                request.body = nova.localize(error.message)
-                nova.notifications.add(request);
-            }
-        }
-
-        try {
-            await this.start()
-        } catch (e) {
-            handleStartupError(e)
-        }
-    }
-
-    async start() {
-        if (this.languageClient && !this.languageClient.stopped) {
-            throw new AlreadyStartedError(
-                "Cannot start the Language Server; it is already running, and hasn't been stopped."
-            )
-        }
-        this.stopped = false
-
-        const nodePath = await which("node");
-
-        const serverOptions = {
-            path: nodePath,
-            args: [this.runnerPath, this.path, "--stdio"],
-            type: "stdio"
-        }
-        const clientOptions = {
-            syntaxes: ["python"]
-        }
-        this.languageClient = new LanguageClient(
-            "pyright",
-            "Pyright",
-            serverOptions,
-            clientOptions,
-        )
-
-        const onStop = new Promise((_resolve, reject) => this.languageClient.onDidStop(reject));
-
-        this.languageClient.start();
-        return onStop;
-    }
-
-    deactivate() {
-        this.languageClient.stop();
-        this.languageClient.stopped = true;
-    }
-
-    setPath(path) {
-        this.path = path
-        if (!this.stopped) {
-            this.deactivate();
-            this.safelyStart();
-        }
-    }
-}
-
-class AlreadyStartedError extends Error { }
-
-/*
-More sidebar */
-class StatusDataProvider {
-    getChildren(element) {
-        if (element == null) {
-            return [
-                {
-                    name: "Status",
-                    value: langserver.stopped ? "Stopped" : "Running",
-                },
-                {
-                    name: "Version",
-                    value: "Unknown"
-                }
-            ];
-        }
-    }
-
-    // getParent(element) {
-        // Optional
-    // }
-
-    getTreeItem({name, value}) {
-        let item = new TreeItem(name);
-        item.descriptiveText = value;
-        return item;
-    }
+function registerCommands(server, dataProvider) {
+	nova.commands.register("restartLanguageServer", () => {
+		server.deactivate();
+		loadLanguageServer(server, dataProvider);
+	});
 }
