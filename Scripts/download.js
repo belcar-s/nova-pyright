@@ -16,6 +16,9 @@ exports.downloadLanguageServer = (name) => {
 		});
 	});
 
+	process.onStdout(line => {
+		console.warn(line);
+	});
 	process.start();
 	return onExit;
 };
