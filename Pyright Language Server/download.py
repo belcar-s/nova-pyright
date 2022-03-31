@@ -20,6 +20,12 @@ def get_latest_version_number():
     response = get(redirect_link)
     return response.url.split("/")[-1]
 
+destination_dirname = None
+if len(argv) > 1:
+    destination_dirname = argv[1]
+else:
+    destination_dirname = "primary"
+
 parentdir_path = dirname(realpath(__file__)) # the "Pyright Language Server" path
 pyright_version = get_latest_version_number()
 
@@ -39,13 +45,13 @@ def download(url, output_path):
     else:
         remove(output_path)
         download(url, output_path)
-archive_path = join(parentdir_path, "primary.tar.gz")
+archive_path = join(parentdir_path, destination_dirname + ".tar.gz")
 address = f"https://github.com/microsoft/pyright/archive/refs/tags/{pyright_version}.tar.gz"
 download(address, archive_path)
 
 # =========
 print("Extracting…")
-extractdir_path = join(parentdir_path, "extract_temp") # where the Pyright monorepo is extracted
+extractdir_path = join(parentdir_path, destination_dirname + " extraction") # where the Pyright monorepo is extracted
 if not exists(extractdir_path):
     makedirs(extractdir_path)
 archive = tarfile.open(archive_path)
@@ -80,11 +86,6 @@ run([
     "build"
 ], cwd=pyright_server_path)
 
-destination_dirname = None
-if len(argv) > 3:
-    destination_dirname = argv[2]
-else:
-    destination_dirname = "primary"
 print(destination_dirname)
 
 destination_path = join(parentdir_path, destination_dirname)
