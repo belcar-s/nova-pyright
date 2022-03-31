@@ -79,9 +79,9 @@
         {
             "id": "pyright.status",
             "name": "Pyright",
-            "smallImage": "logo-small",
-            "smallSelectedImage": "logo-small-selected",
-            "largeImage": "logo-large",
+            "smallImage": "small_sidebar",
+            "smallSelectedImage": "small_sidebar-selected",
+            "largeImage": "large_sidebar",
             "sections": [
                 {
                     "id": "pyright.status-details",
