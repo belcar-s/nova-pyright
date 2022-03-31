@@ -19,13 +19,16 @@ function exists(path) {
 class AlreadyStartedError extends Error { }
 class PyrightLanguageServer {
 	constructor({ serverPaths, runnerPath }) {
-		// pick the best path
+		// pick the best path and set `this.type`
 		if (serverPaths.user) {
 			this.path = serverPaths.user;
+			this.type = "user";
 		} else if (exists(serverPaths.updated)) {
 			this.path = serverPaths.updated;
+			this.type = "updated";
 		} else {
 			this.path = serverPaths.primary;
+			this.type = "primary";
 		}
 
 		this.runnerPath = runnerPath;

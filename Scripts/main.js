@@ -67,15 +67,18 @@ function loadLanguageServer(server, dataProvider) {
 	);
 
 	dataProvider.updateStatus(nova.localize("Starting…"));
-	dataProvider.updateVersion(serverPackageJSON.version);
+	dataProvider.updateVersion(
+		serverPackageJSON.version + ` (${nova.localize(server.type)})`
+	);
 
 	server.start().catch(e => {
 		// This function is run after the server quits.
 		dataProvider.updateStatus(nova.localize("Stopped"));
 
 		// inform the user of the error
-		const notificationRequest = new NotificationRequest;
-		notificationRequest.title = nova.localize("Pyright Language Server Stopped");
+		let notificationRequest = new NotificationRequest;
+		notificationRequest.title =
+			nova.localize("Pyright Language Server Stopped");
 
 		// obtain the notification's body, which depends
 		// on the cause of the error
@@ -85,6 +88,8 @@ function loadLanguageServer(server, dataProvider) {
 		} else if (e.yy /* has z quality*/) {
 			/* do ☈ thing */
 		}
+
+		nova.notifications.add(notificationRequest);
 	});
 
 	// (?) I'm unsure of whether this is a good idea :)
