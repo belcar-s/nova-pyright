@@ -1,4 +1,4 @@
-![Screenshot of the Nova editor showcasing Pyright functionality.](Screenshots/main.png)
+![Screenshot of the Nova editor showcasing Pyright functionality.](https://raw.githubusercontent.com/belcar-s/nova-pyright/trunk/Screenshots/main.png)
 
 *Pyright for Nova* aids in Python development. It provides more useful code completions, automatically introduces import statements, and displays details about variables over which the cursor hovers.
 
