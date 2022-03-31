@@ -107,7 +107,37 @@ function registerCommands(server, dataProvider) {
 		loadLanguageServer(server, dataProvider);
 	});
 
-	nova.commands.register("updateLanguageServer", () => {
-		downloadLanguageServer("updated");
+	nova.commands.register("updateLanguageServer", async () => {
+		// provide an immediate reaction
+		let initialNotificationRequest = new NotificationRequest;
+		initialNotificationRequest.title = nova.localize("Downloading");
+		initialNotificationRequest.body =
+			nova.localize("The latest version of Pyright is being downloaded.");
+		nova.notifications.add(initialNotificationRequest);
+
+		// actually download
+		try {
+			await downloadLanguageServer("updated");
+		} catch (e) {
+			// This code runs if the script quits with a non-zero
+			// exit code.
+			let errorNotificationRequest = new NotificationRequest;
+			errorNotificationRequest.title =
+				nova.localize("Could Not Update Pyright");
+
+			// (?) I'm not confident of that this is a good
+			// message :)
+			errorNotificationRequest.body =
+				nova.localize(`An unknown error occurred. (${e})`);
+
+			nova.notifications.add(errorNotificationRequest);
+		}
+
+		// notify of completion
+		let completionNotificationRequest = new NotificationRequest;
+		completionNotificationRequest.title = nova.localize("Download Completed");
+		completionNotificationRequest.body =
+			nova.localize("The latest version of Pyright was downloaded.");
+		nova.notifications.add(completionNotificationRequest);
 	});
 }

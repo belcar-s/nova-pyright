@@ -42,12 +42,16 @@
         ],
         "extensions": [
             {
-                "title": "Restart Server (Pyright)",
+                "title": "Restart Server",
                 "command": "restartLanguageServer"
             },
             {
-                "title": "Update Server (Pyright)",
+                "title": "Update Server",
                 "command": "updateLanguageServer"
+            },
+            {
+                "title": "Use Bundled Server",
+                "command": "useBundledServer"
             }
         ]
     },
@@ -86,8 +90,7 @@
                     "headerCommands": [
                         {
                             "title": "Restart",
-                            "image": "restart",
-                            "tooltip": "Restart the Pyright Language Server",
+                            "tooltip": "Restart the Pyright Language Server.",
                             "command": "restartLanguageServer"
                         }
                     ]
@@ -95,7 +98,19 @@
                 {
                     "id": "pyright.update",
                     "name": "Update",
-                    "allowMultiple": false
+                    "allowMultiple": false,
+                    "headerCommands": [
+                        {
+                            "title": "🌐 Download",
+                            "tooltip": "Use the internet to obtain the latest Pyright version.",
+                            "command": "updateLanguageServer"
+                        },
+                        {
+                            "title": "🗑 Reset",
+                            "tooltip": "Use the bundled Pyright version.",
+                            "command": "useBundledServer"
+                        }
+                    ]
                 }
             ]
         }
