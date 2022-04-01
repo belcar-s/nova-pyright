@@ -1,6 +1,6 @@
 // Run a version of the Pyright Language Server
 
-// The files we obtain (primary.js, updated.js) export a 'main'
+// The files we obtain (nodeMain.js) export a 'main'
 // function. Calling the function starts the server —not just
 // executing the file.
 
@@ -8,7 +8,7 @@
 //     1) a path
 //     2) '--stdio'
 
-const args = process.argv.slice(2)
+const args = process.argv.slice(2);
 
-const { main } = require(args[0])
+const { main } = require(args[0]);
 main();
