@@ -67,6 +67,7 @@ class PyrightLanguageServer {
 
 		const onStop = new Promise((_resolve, reject) => this.languageClient.onDidStop(reject));
 
+		// This can throw:
 		this.languageClient.start();
 		return onStop;
 	}
