@@ -94,12 +94,11 @@ function loadLanguageServer(server, dataProvider) {
 	});
 
 	// (?) I'm unsure of whether this is a good idea :)
-	setInterval(() => {
-		console.warn("Reloading TreeView: " + String(Date.now()).slice(9));
+	setTimeout(() => {
 		if (server.languageClient?.running) {
 			dataProvider.updateStatus(nova.localize("Running"));
 		} else {
-			dataProvider.updateStatus(nova.localize("Stopped"));
+			dataProvider.updateStatus(nova.localize("Startup Delayed"));
 		}
 	}, 1000);
 }
