@@ -7,36 +7,37 @@ const { StatusDataProvider } = require("./StatusDataProvider.js");
 const { PyrightLanguageServer } = require("./PyrightLanguageServer.js");
 const { downloadLanguageServer } = require("./download.js");
 
+let languageServer;
+
 exports.activate = async function () {
 	// This function loads the sidebar. It then returns
 	// a StatusDataProvider, which is used to update
 	// status information on the sidebar.
 	const dataProvider = loadSidebar();
 
-	let languageServer = null;
-	function restartServer() {
-		if (languageServer) {
-			languageServer.deactivate();
-		}
-
-		// This is run immediately and once. Later, it
-		// may be run upon changes to the user's path
-		// setting.
-
-		// create server object
-		languageServer = new PyrightLanguageServer({
-			serverPaths: serverPaths(),
-			runnerPath,
-		});
-
-		// load it :)
-		loadLanguageServer(languageServer, dataProvider);
-	}
 	nova.config.observe(USER_PATH_CONFIG_KEY, restartServer);
 
-	registerCommands(languageServer, dataProvider, restartServer);
+	registerCommands(dataProvider);
 };
 
+function restartServer() {
+	if (languageServer) {
+		languageServer.deactivate();
+	}
+
+	// This is run immediately and once. Later, it
+	// may be run upon changes to the user's path
+	// setting.
+
+	// create server object
+	languageServer = new PyrightLanguageServer({
+		serverPaths: serverPaths(),
+		runnerPath,
+	});
+
+	// load it :)
+	loadLanguageServer(languageServer, dataProvider);
+}
 function loadSidebar() {
 	const SECTION_ID = "pyright.status-details";
 
@@ -102,10 +103,10 @@ function loadLanguageServer(server, dataProvider) {
 		}
 	}, 1000);
 }
-function registerCommands(server, dataProvider, restartServer) {
+function registerCommands(dataProvider) {
 	nova.commands.register("restartLanguageServer", () => {
-		server.deactivate();
-		loadLanguageServer(server, dataProvider);
+		languageServer.deactivate();
+		loadLanguageServer(languageServer, dataProvider);
 	});
 
 	let isDownloading = false;
