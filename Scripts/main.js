@@ -166,4 +166,18 @@ function registerCommands(dataProvider) {
 		// restart Language Server
 		restartServer(dataProvider);
 	});
+	nova.commands.register("useBundledServer", () => {
+		if (nova.config.get(USER_PATH_CONFIG_KEY)) {
+			let errorNotificationRequest = new NotificationRequest;
+			errorNotificationRequest.title =
+				nova.localize("Configuration Change Needed");
+			errorNotificationRequest.body =
+				nova.localize("To use the built-in server, empty the text box labelled 'Server Location'.");
+		} else {
+			const updatedPath = serverPaths().updated;
+			// I'm very anxious of that this deletes everything.
+			// If it does, I'm sorry. I didn't mean to.
+			nova.fs.remove(updatedPath);
+		}
+	});
 }
