@@ -15,12 +15,12 @@ exports.activate = async function () {
 	// status information on the sidebar.
 	const dataProvider = loadSidebar();
 
-	nova.config.observe(USER_PATH_CONFIG_KEY, restartServer);
+	nova.config.observe(USER_PATH_CONFIG_KEY, () => restartServer(dataProvider));
 
 	registerCommands(dataProvider);
 };
 
-function restartServer() {
+function restartServer(dataProvider) {
 	if (languageServer) {
 		languageServer.deactivate();
 	}
