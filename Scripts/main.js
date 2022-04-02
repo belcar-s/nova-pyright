@@ -168,6 +168,9 @@ function registerCommands(dataProvider) {
 	});
 	nova.commands.register("useBundledServer", () => {
 		if (nova.config.get(USER_PATH_CONFIG_KEY)) {
+			// For a user who has downloaded an updated version of
+			// the server, switching to the bundled version will
+			// unfortunately involve invoking this command twice.
 			let errorNotificationRequest = new NotificationRequest;
 			errorNotificationRequest.title =
 				nova.localize("Configuration Change Needed");
