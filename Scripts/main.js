@@ -20,6 +20,18 @@ exports.activate = async function () {
 	registerCommands(dataProvider);
 };
 
+function loadSidebar() {
+	const SECTION_ID = "pyright.status-details";
+
+	const dataProvider = new StatusDataProvider();
+	const treeView = new TreeView(SECTION_ID, { dataProvider });
+	dataProvider.treeView = treeView;
+
+	// (?) The use of this is unknown to me.
+	nova.subscriptions.add(treeView);
+
+	return dataProvider;
+}
 function restartServer(dataProvider) {
 	if (languageServer) {
 		languageServer.deactivate();
@@ -37,18 +49,6 @@ function restartServer(dataProvider) {
 
 	// load it :)
 	loadLanguageServer(languageServer, dataProvider);
-}
-function loadSidebar() {
-	const SECTION_ID = "pyright.status-details";
-
-	const dataProvider = new StatusDataProvider();
-	const treeView = new TreeView(SECTION_ID, { dataProvider });
-	dataProvider.treeView = treeView;
-
-	// (?) The use of this is unknown to me.
-	nova.subscriptions.add(treeView);
-
-	return dataProvider;
 }
 function loadLanguageServer(server, dataProvider) {
 	function loadJSON(path) {
