@@ -117,7 +117,7 @@ function registerCommands(dataProvider) {
 				nova.localize("Cannot Download Right Now");
 			alreadyStartedNotificationRequest.body =
 				nova.localize("Pyright is already being downloaded.");
-
+			nova.notifications.add(alreadyStartedNotificationRequest);
 			return;
 		}
 
