@@ -3,3 +3,6 @@ primary.tar.gz
 primary/*
 updated/*
 updated.tar.gz
+
+requests.tar.gz
+requests/*

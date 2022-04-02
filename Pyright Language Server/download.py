@@ -8,13 +8,42 @@
 # 'primary' if no arguments are passed; otherwise, it's argv[1],
 # which I think is the first argument after the script's path.
 
-from os.path import realpath, dirname, join, exists
-from os import makedirs, remove
-from requests import get
-from shutil import rmtree, which, copytree, move
-from subprocess import run
-from sys import argv, stdout
 import tarfile
+from os import makedirs, remove, scandir
+from os.path import realpath, dirname, join, exists
+from subprocess import run
+from shutil import rmtree, which, copytree, move
+
+parentdir_path = dirname(realpath(__file__)) # the "Pyright Language Server" path
+
+# Download `requests`
+requests_path = join(parentdir_path, "requests")
+requests_extraction_path = join(parentdir_path, "requests_extraction")
+if not exists(requests_path):
+    requests_tar_path = join(parentdir_path, "requests.tar.gz")
+    run([
+        "curl",
+        "https://github.com/psf/requests/tarball/main",
+        "-L",
+        "--output",
+        requests_tar_path
+    ])
+
+    requests_archive = tarfile.open(requests_tar_path)
+    requests_archive.extractall(requests_extraction_path)
+    requests_archive.close()
+    remove(requests_tar_path)
+
+    with scandir(requests_extraction_path) as dirs:
+        for dir in dirs:
+            # There's only one directory, which has the
+            # archive's contents.
+            copytree(join(dir.path, "requests"), requests_path)
+
+    rmtree(requests_extraction_path)
+
+from requests import get
+from sys import argv
 def get_latest_version_number():
     redirect_link = "https://github.com/microsoft/pyright/releases/latest"
     response = get(redirect_link)
@@ -26,7 +55,6 @@ if len(argv) > 1:
 else:
     destination_dirname = "primary"
 
-parentdir_path = dirname(realpath(__file__)) # the "Pyright Language Server" path
 pyright_version = get_latest_version_number()
 
 # =========
