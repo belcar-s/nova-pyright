@@ -164,6 +164,6 @@ function registerCommands(dataProvider) {
 		nova.notifications.add(completionNotificationRequest);
 
 		// restart Language Server
-		restartServer();
+		restartServer(dataProvider);
 	});
 }
