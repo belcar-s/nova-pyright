@@ -7,7 +7,7 @@
     "version": "0.1.0",
     "entitlements": {
         "process": true,
-        "filesystem": "readonly"
+        "filesystem": "readwrite"
     },
     "activationEvents": [
         "onLanguage:python"
