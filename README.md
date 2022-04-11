@@ -8,7 +8,7 @@
 
 * Alerts of unused variables, unused expressions, and references to undefined variables
 
-* Information about a function's parameters is provided while its arguments are being filled in
+* Provides information about a function's parameters while its arguments are being filled in
 
 ## Installation
 
