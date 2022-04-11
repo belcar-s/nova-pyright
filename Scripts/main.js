@@ -9,7 +9,7 @@ const { downloadLanguageServer } = require("./download.js");
 
 let languageServer;
 
-exports.activate = async function () {
+exports.activate = function () {
 	// This function loads the sidebar. It then returns
 	// a StatusDataProvider, which is used to update
 	// status information on the sidebar.
