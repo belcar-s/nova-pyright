@@ -1,118 +1,118 @@
 {
-    "identifier": "belcar.pyright",
-    "name": "Pyright",
-    "organization": "belcar-s",
-    "description": "A Python extension powered by Microsoft's Pyright Language Server.",
-    "main": "main.js",
-    "version": "0.1.0",
-    "entitlements": {
-        "process": true,
-        "filesystem": "readwrite"
-    },
-    "activationEvents": [
-        "onLanguage:python"
-    ],
-    "bugs": "https://github.com/belcar-s/nova-pyright",
-    "categories": [
-        "languages",
-        "issues",
-        "completions",
-        "commands"
-    ],
-    "commands": {
-        "editor": [
-            {
-                "title": "Order Imports",
-                "command": "orderImports",
-                "filters": {
-                    "syntaxes": [
-                        "python"
-                    ]
-                }
-            },
-            {
-                "title": "Add Missing Optional To Parameter",
-                "command": "addMissingOptionalToParam",
-                "filters": {
-                    "syntaxes": [
-                        "python"
-                    ]
-                }
-            }
-        ],
-        "extensions": [
-            {
-                "title": "Restart Server",
-                "command": "restartLanguageServer"
-            },
-            {
-                "title": "Update Server",
-                "command": "updateLanguageServer"
-            },
-            {
-                "title": "Use Bundled Server",
-                "command": "useBundledServer"
-            }
-        ]
-    },
-    "configWorkspace": [
-        {
-            "key": "pyright.validation_enabled",
-            "title": "Enable Validation",
-            "type": "boolean",
-            "default": true,
-            "description": "Validate files in this project."
-        }
-    ],
-    "config": [
-        {
-            "key": "pyright.user_path",
-            "title": "Server Location",
-            "type": "path",
-            "placeholder": "Built-in",
-            "description": "Select a JavaScript file; the extension will run it with Node.js.",
-            "allowFolders": false,
-            "required": false
-        }
-    ],
-    "sidebars": [
-        {
-            "id": "pyright.status",
-            "name": "Pyright",
-            "smallImage": "small_sidebar",
-            "smallSelectedImage": "small_sidebar-selected",
-            "largeImage": "large_sidebar",
-            "sections": [
-                {
-                    "id": "pyright.status-details",
-                    "name": "Details",
-                    "allowMultiple": false,
-                    "headerCommands": [
-                        {
-                            "title": "Restart",
-                            "tooltip": "Restart the Pyright Language Server.",
-                            "command": "restartLanguageServer"
-                        }
-                    ]
-                },
-                {
-                    "id": "pyright.update",
-                    "name": "Update",
-                    "allowMultiple": false,
-                    "headerCommands": [
-                        {
-                            "title": "🌐 Download",
-                            "tooltip": "Use the internet to obtain the latest Pyright version.",
-                            "command": "updateLanguageServer"
-                        },
-                        {
-                            "title": "🗑 Reset",
-                            "tooltip": "Use the bundled Pyright version.",
-                            "command": "useBundledServer"
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+	"identifier": "belcar.pyright",
+	"name": "Pyright",
+	"organization": "belcar-s",
+	"description": "A Python extension powered by Microsoft's Pyright Language Server.",
+	"main": "main.js",
+	"version": "0.1.0",
+	"entitlements": {
+		"process": true,
+		"filesystem": "readwrite"
+	},
+	"activationEvents": [
+		"onLanguage:python"
+	],
+	"bugs": "https://github.com/belcar-s/nova-pyright",
+	"categories": [
+		"languages",
+		"issues",
+		"completions",
+		"commands"
+	],
+	"commands": {
+		"editor": [
+			{
+				"title": "Order Imports",
+				"command": "orderImports",
+				"filters": {
+					"syntaxes": [
+						"python"
+					]
+				}
+			},
+			{
+				"title": "Add Missing Optional To Parameter",
+				"command": "addMissingOptionalToParam",
+				"filters": {
+					"syntaxes": [
+						"python"
+					]
+				}
+			}
+		],
+		"extensions": [
+			{
+				"title": "Restart Server",
+				"command": "restartLanguageServer"
+			},
+			{
+				"title": "Update Server",
+				"command": "updateLanguageServer"
+			},
+			{
+				"title": "Use Bundled Server",
+				"command": "useBundledServer"
+			}
+		]
+	},
+	"configWorkspace": [
+		{
+			"key": "belcar.pyright.validation_enabled",
+			"title": "Enable Validation",
+			"type": "boolean",
+			"default": true,
+			"description": "Validate files in this project."
+		}
+	],
+	"config": [
+		{
+			"key": "belcar.pyright.user_path",
+			"title": "Server Location",
+			"type": "path",
+			"placeholder": "Built-in",
+			"description": "Select a JavaScript file; the extension will run it with Node.js.",
+			"allowFolders": false,
+			"required": false
+		}
+	],
+	"sidebars": [
+		{
+			"id": "pyright.status",
+			"name": "Pyright",
+			"smallImage": "small_sidebar",
+			"smallSelectedImage": "small_sidebar-selected",
+			"largeImage": "large_sidebar",
+			"sections": [
+				{
+					"id": "pyright.status-details",
+					"name": "Details",
+					"allowMultiple": false,
+					"headerCommands": [
+						{
+							"title": "Restart",
+							"tooltip": "Restart the Pyright Language Server.",
+							"command": "restartLanguageServer"
+						}
+					]
+				},
+				{
+					"id": "pyright.update",
+					"name": "Update",
+					"allowMultiple": false,
+					"headerCommands": [
+						{
+							"title": "🌐 Download",
+							"tooltip": "Use the internet to obtain the latest Pyright version.",
+							"command": "updateLanguageServer"
+						},
+						{
+							"title": "🗑 Reset",
+							"tooltip": "Use the bundled Pyright version.",
+							"command": "useBundledServer"
+						}
+					]
+				}
+			]
+		}
+	]
 }
