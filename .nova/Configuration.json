@@ -1,4 +1,5 @@
 {
+  "python.interpreter" : "\/usr\/bin\/python3",
   "workspace.color" : 11,
   "workspace.name" : "Nova Pyright"
 }
