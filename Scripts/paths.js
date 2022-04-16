@@ -1,14 +1,13 @@
 const CONFIG_KEY = "belcar.pyright.user_path";
 const parentDirectoryPath = nova.path.normalize(nova.path.join(__dirname, "..", "Pyright Language Server"));
 
-exports.runnerPath = nova.path.join(parentDirectoryPath, "run.js");
-
 function getServerPath(name) {
 	return nova.path.join(
 		parentDirectoryPath,
 		name,
-		"built",
-		"nodeMain.js", // Entrypoint
+		"packages",
+		"pyright",
+		"langserver.index.js" // Entrypoint
 	);
 }
 exports.serverPaths = () => ({

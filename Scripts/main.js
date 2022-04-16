@@ -1,6 +1,5 @@
 const {
 	serverPaths,
-	runnerPath,
 	USER_PATH_CONFIG_KEY
 } = require("./paths.js");
 const { StatusDataProvider } = require("./StatusDataProvider.js");
@@ -44,7 +43,6 @@ function restartServer(dataProvider) {
 	// create server object
 	languageServer = new PyrightLanguageServer({
 		serverPaths: serverPaths(),
-		runnerPath,
 	});
 
 	// load it :)

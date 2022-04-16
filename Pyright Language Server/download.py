@@ -93,18 +93,18 @@ print("Building Pyright…")
 # ======
 print("(Installing Pyright dependencies…)")
 npm_path = which("npm")
+if not npm_path:
+    raise Exception("Missing NPM.")
 
-pyright_server_path = join(
+pyright_modules_path = join(
     extractdir_path,
     "pyright-" + pyright_version,
-    "packages",
-    "pyright-internal"
 )
 
 run([
     npm_path,
     "install"
-], cwd=pyright_server_path)
+], cwd=pyright_modules_path)
 
 # ======
 print("(Building…)")
@@ -112,28 +112,19 @@ run([
     npm_path,
     "run",
     "build"
-], cwd=pyright_server_path)
+], cwd=join(
+    pyright_modules_path,
+    "packages",
+    "pyright"
+))
 
 print(destination_dirname)
 
 destination_path = join(parentdir_path, destination_dirname)
 if exists(destination_path):
     rmtree(destination_path)
-copytree(pyright_server_path, destination_path)
+copytree(pyright_modules_path, destination_path)
 
 rmtree(extractdir_path)
-
-# ======
-print("(Doing something confusing…)")
-# The 'server.js' file includes a call to 'require'
-# with a path to a non-existent package.json. By
-# moving the folder, the call succeeds. If this step
-# is omitted, the server crashes immediately upon
-# execution.
-
-move(
-    join(destination_path, "out", "src"),
-    join(destination_path, "built")
-)
 
 print("Finished!")

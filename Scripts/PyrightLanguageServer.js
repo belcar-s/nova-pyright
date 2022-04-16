@@ -18,7 +18,7 @@ function exists(path) {
 
 class AlreadyStartedError extends Error { }
 class PyrightLanguageServer {
-	constructor({ serverPaths, runnerPath }) {
+	constructor({ serverPaths }) {
 		// pick the best path and set `this.type`
 		if (serverPaths.user) {
 			this.path = serverPaths.user;
@@ -31,7 +31,6 @@ class PyrightLanguageServer {
 			this.type = "primary";
 		}
 
-		this.runnerPath = runnerPath;
 		this.stopped = true;
 	}
 
@@ -50,9 +49,7 @@ class PyrightLanguageServer {
 		console.log("Hi; sorry to bother. I'm starting the server.");
 		const serverOptions = {
 			path: nodePath,
-			// See `run.js` for an explanation of its
-			// importance.
-			args: [this.runnerPath, this.path, "--stdio"],
+			args: [this.path, "--stdio"],
 			type: "stdio"
 		};
 		const clientOptions = {
