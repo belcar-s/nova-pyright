@@ -61,7 +61,6 @@ function loadLanguageServer(server, dataProvider) {
 		nova.path.normalize(nova.path.join(
 			server.path, // the server's entry point
 			"..",
-			"..",
 			"package.json"
 		))
 	);
