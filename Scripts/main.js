@@ -173,6 +173,7 @@ function registerCommands(dataProvider) {
 				nova.localize("Configuration Change Needed");
 			errorNotificationRequest.body =
 				nova.localize("To use the built-in server, empty the text box labelled 'Server Location'.");
+			nova.notifications.add(errorNotificationRequest);
 		} else {
 			const updatedPath = serverPaths().updated;
 			// I'm very anxious of that this deletes everything.
