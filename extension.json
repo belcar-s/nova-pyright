@@ -55,7 +55,7 @@
 				"command": "useBundledServer"
 			},
 			{
-				"title": "Force Unlock Initialization",
+				"title": "Forcefully Unlock Initialization",
 				"command": "unlockInit"
 			}
 		]
