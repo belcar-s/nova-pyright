@@ -1,6 +1,5 @@
 const {
 	serverPaths,
-	downloadPath,
 	USER_PATH_CONFIG_KEY
 } = require("./paths.js");
 const { StatusDataProvider } = require("./StatusDataProvider.js");
@@ -10,6 +9,10 @@ const { downloadLanguageServer } = require("./download.js");
 let languageServer;
 
 exports.activate = async function () {
+	nova.commands.register("unlockInit", () => {
+		nova.config.set("belcar.pyright.lockinit", false);
+	});
+	
 	await ensureLanguageServer();
 	
 	// This function loads the sidebar. It then returns
@@ -26,12 +29,19 @@ async function ensureLanguageServer() {
 		return !!nova.fs.stat(path);
 	}
 
-	const lock = nova.path.join(downloadPath, "locked");
-	if (exists(lock)) {
-		return;
+	if (nova.config.get("belcar.pyright.lockinit")) {
+		console.log("Initialization is locked.");
+		return new Promise(resolve => {
+			nova.config.onDidChange("belcar.pyright.lockinit", value => {
+				if (value == false) {
+					console.log("Unlocked.");
+					resolve();
+				}
+			});
+		});
 	}
 
-	nova.fs.open(lock, "x");
+	nova.config.set("belcar.pyright.lockinit", true);
 
 	const primaryPath = serverPaths().primary;
 	if (!exists(primaryPath)) {
@@ -49,6 +59,8 @@ async function ensureLanguageServer() {
 		
 		nova.notifications.add(finishedNotificationRequest);
 	}
+	
+	nova.config.set("belcar.pyright.lockinit", false);
 }
 function loadSidebar() {
 	const SECTION_ID = "pyright.status-details";

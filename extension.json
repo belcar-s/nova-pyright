@@ -53,6 +53,10 @@
 			{
 				"title": "Use Bundled Server",
 				"command": "useBundledServer"
+			},
+			{
+				"title": "Force Unlock Initialization",
+				"command": "unlockInit"
 			}
 		]
 	},

@@ -3,7 +3,7 @@ const downloadPath = require("./paths.js");
 async function getLatestVersionNumber () {
 	const redirectLink = "https://github.com/microsoft/pyright/releases/latest";
 	const response = await fetch(redirectLink);
-	
+
 	const parts = response.url.split("/");
 	return parts[parts.length - 1];
 }
@@ -14,18 +14,19 @@ function startProcess(location, args, cwd) {
 	};
 	const process = new Process(location, options);
 	process.onStdout(console.log);
-	
+
 	const onExit = new Promise((resolve, reject) => {
 		process.onDidExit(status => {
 			const action = status == 0 ? resolve : reject;
 			action(status);
 		});
 	});
-	
+
 	process.start();
 	return onExit;
 }
 function download (url, outputPath) {
+	console.log(url, outputPath);
 	const args = [url, "-L", "--output", outputPath];
 	return startProcess("/usr/bin/curl", args);
 }
@@ -47,29 +48,29 @@ function runTask (task, directory) {
 exports.downloadLanguageServer = async (name) => {
 	console.log("Downloading " + name + ".");
 	const version = await getLatestVersionNumber();
-	
+
 	console.log("Going to download Pyright version " + version);
-	
+
 	const address = `https://github.com/microsoft/pyright/archive/refs/tags/${version}.zip`;
 	const archivePath = nova.path.join(downloadPath, name + ".zip");
 	await download(address, archivePath);
-	
+
 	console.log("Downloaded archive.");
-	console.log("Extracting…");	
-	
+	console.log("Extracting…");
+
 	const dirname = nova.path.join(downloadPath, name);
 	await unzip(archivePath, dirname);
-	
+
 	console.log("Installing Pyright dependencies…");
 	await install(dirname);
-	
+
 	console.log("Building…");
 	await runTask(
-		"build", 
+		"build",
 		nova.path.join(dirname, "packages", "pyright"),
 	);
-	
+
 	console.log(dirname);
-	
+
 	nova.fs.remove(archivePath);
 };
