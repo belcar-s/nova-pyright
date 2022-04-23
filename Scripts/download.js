@@ -3,7 +3,9 @@ const downloadPath = require("./paths.js");
 async function getLatestVersionNumber () {
 	const redirectLink = "https://github.com/microsoft/pyright/releases/latest";
 	const response = await fetch(redirectLink);
-	return response.url.split("/")[-1];
+	
+	const parts = response.url.split("/");
+	return parts[parts.length - 1];
 }
 function startProcess(location, args, cwd) {
 	const options = {
