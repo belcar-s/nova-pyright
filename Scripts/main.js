@@ -146,6 +146,7 @@ function registerCommands(dataProvider) {
 				nova.localize(`An unknown error occurred. (${e})`);
 
 			nova.notifications.add(errorNotificationRequest);
+			return
 		}
 
 		isDownloading = false;
