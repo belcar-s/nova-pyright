@@ -1,5 +1,6 @@
 const {
 	serverPaths,
+	downloadPath,
 	USER_PATH_CONFIG_KEY
 } = require("./paths.js");
 const { StatusDataProvider } = require("./StatusDataProvider.js");
@@ -25,6 +26,13 @@ async function ensureLanguageServer() {
 		return !!nova.fs.stat(path);
 	}
 
+	const lock = nova.path.join(downloadPath, "locked");
+	if (exists(lock)) {
+		return;
+	}
+
+	nova.fs.open(lock, "x");
+
 	const primaryPath = serverPaths().primary;
 	if (!exists(primaryPath)) {
 		let notificationRequest = new NotificationRequest;
@@ -41,7 +49,6 @@ async function ensureLanguageServer() {
 		
 		nova.notifications.add(finishedNotificationRequest);
 	}
-
 }
 function loadSidebar() {
 	const SECTION_ID = "pyright.status-details";
