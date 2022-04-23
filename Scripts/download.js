@@ -43,6 +43,7 @@ function runTask (task, directory) {
 }
 
 exports.downloadLanguageServer = async (name) => {
+	console.log("Downloading " + name + ".");
 	const version = await getLatestVersionNumber();
 	
 	console.log("Going to download Pyright version " + version);
