@@ -8,7 +8,9 @@ const { downloadLanguageServer } = require("./download.js");
 
 let languageServer;
 
-exports.activate = function () {
+exports.activate = async function () {
+	await ensureLanguageServer();
+	
 	// This function loads the sidebar. It then returns
 	// a StatusDataProvider, which is used to update
 	// status information on the sidebar.
@@ -18,7 +20,29 @@ exports.activate = function () {
 
 	registerCommands(dataProvider);
 };
+async function ensureLanguageServer() {
+	function exists(path) {
+		return !!nova.fs.stat(path);
+	}
 
+	const primaryPath = serverPaths().primary;
+	if (!exists(primaryPath)) {
+		let notificationRequest = new NotificationRequest;
+		notificationRequest.title = nova.localize("Downloading Pyright…");
+		notificationRequest.body = nova.localize("Before you can use Pyright, it needs to be downloaded. Please wait.");
+		
+		nova.notifications.add(notificationRequest);
+		
+		await downloadLanguageServer("primary");
+		
+		let finishedNotificationRequest = new NotificationRequest;
+		finishedNotificationRequest.title = nova.localize("Finished downloading Pyright for the first time");
+		finishedNotificationRequest.body = nova.localize("Language features will be enabled in a moment.");
+		
+		nova.notifications.add(finishedNotificationRequest);
+	}
+
+}
 function loadSidebar() {
 	const SECTION_ID = "pyright.status-details";
 
@@ -146,7 +170,7 @@ function registerCommands(dataProvider) {
 				nova.localize(`An unknown error occurred. (${e})`);
 
 			nova.notifications.add(errorNotificationRequest);
-			return
+			return;
 		}
 
 		isDownloading = false;
@@ -164,7 +188,7 @@ function registerCommands(dataProvider) {
 		// restart Language Server
 		restartServer(dataProvider);
 	});
-	nova.commands.register("useBundledServer", () => {
+	nova.commands.register("useBundledServer", async () => {
 		if (nova.config.get(USER_PATH_CONFIG_KEY)) {
 			// For a user who has downloaded an updated version of
 			// the server, switching to the bundled version will
@@ -179,8 +203,21 @@ function registerCommands(dataProvider) {
 			const updatedPath = serverPaths().updated;
 			// I'm very anxious of that this deletes everything.
 			// If it does, I'm sorry. I didn't mean to.
-			nova.fs.rmdir(updatedPath);
-			restartServer(dataProvider);
+			let actionNotificationRequest = new NotificationRequest;
+			actionNotificationRequest.title = 
+				nova.localize("Provide permission to delete a directory");
+			actionNotificationRequest.body =
+				`To use the bundled server, the extension needs to remove ${updatedPath}. This is where the updated version of Pyright was downloaded.`;
+			actionNotificationRequest.actions = [
+				nova.localize("Cancel"),
+				nova.localize("Remove folder"),
+			];
+			
+			const reply = await nova.notifications.add(actionNotificationRequest);
+			if (reply.actionIdx == 1) {
+				nova.fs.rmdir(updatedPath);
+				restartServer(dataProvider);
+			}
 		}
 	});
 }

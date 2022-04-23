@@ -22,4 +22,4 @@ exports.serverPaths = () => ({
 });
 
 exports.USER_PATH_CONFIG_KEY = CONFIG_KEY;
-exports.downloaderPath = nova.path.join(parentDirectoryPath, "download.py");
+exports.downloadPath = parentDirectoryPath;

@@ -1,9 +1,3 @@
 {
-  "actions" : {
-    "build" : {
-      "enabled" : true,
-      "script" : "#!\/bin\/sh\npython3 \"Pyright Language Server\/download.py\""
-    }
-  },
-  "identifier" : "482BCE26-92D4-46F2-9586-D88E1A2C6632"
+
 }
