@@ -1,5 +1,7 @@
 {
+  "co.gwil.deno.config.enableLinting" : "null",
+  "co.gwil.deno.config.enableLsp" : "false",
   "python.interpreter" : "\/usr\/bin\/python3",
-  "workspace.color" : 11,
-  "workspace.name" : "Nova Pyright"
+  "workspace.color" : 3,
+  "workspace.name" : "🐍 nova-pyright"
 }
