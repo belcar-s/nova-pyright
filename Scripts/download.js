@@ -10,9 +10,7 @@ exports.downloadLanguageServer = (name) => {
 
 	const process = new Process("/usr/bin/env", options);
 	process.onStdout(line => {
-		if (line != "\n") {
-			console.warn(line);
-		}
+		console.warn(line);
 	});
 
 	const onExit = new Promise((resolve, reject) => {
