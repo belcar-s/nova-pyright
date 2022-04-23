@@ -180,6 +180,7 @@ function registerCommands(dataProvider) {
 			// I'm very anxious of that this deletes everything.
 			// If it does, I'm sorry. I didn't mean to.
 			nova.fs.remove(updatedPath);
+			restartServer(dataProvider);
 		}
 	});
 }
