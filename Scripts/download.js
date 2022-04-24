@@ -31,9 +31,13 @@ function download (url, outputPath) {
 	const args = [url, "-L", "--output", outputPath];
 	return startProcess("/usr/bin/curl", args);
 }
-function unzip (file, outputPath) {
-	const args = [file, "-d", outputPath];
-	return startProcess("/usr/bin/unzip", args);
+async function unzip (file, outputPath) {
+	const tempPath = outputPath + "temp";
+	const args = [file, "-d", tempPath];
+	await startProcess("/usr/bin/unzip", args);
+	const directory = nova.path.join(tempPath, nova.fs.listdir(tempPath)[0]);
+	await startProcess("/bin/mv", [directory, outputPath]);
+	nova.fs.rmdir(tempPath);
 }
 function install (directory) {
 	const cwd = directory;
@@ -41,8 +45,8 @@ function install (directory) {
 	return startProcess("/usr/bin/env", args, cwd);
 }
 function runTask (task, directory) {
-	const cwd = directory;
 	const args = ["npm", "run", task];
+	const cwd = directory;
 	return startProcess("/usr/bin/env", args, cwd);
 }
 
