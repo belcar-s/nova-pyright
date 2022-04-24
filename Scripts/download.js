@@ -88,6 +88,7 @@ exports.downloadLanguageServer = async (name) => {
 	await tryToInstall();
 
 	console.log("Building…");
+	console.log("Sorry that it's taking so long. If you know how to make this faster, please open an issue at belcar-s/nova-pyright.");
 	let progressNotification = new NotificationRequest;
 	progressNotification.title = nova.localize("Still Downloading Pyright");
 	progressNotification.body = nova.localize("Just one more second…");
