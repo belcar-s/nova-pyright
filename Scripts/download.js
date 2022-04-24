@@ -74,7 +74,7 @@ exports.downloadLanguageServer = async (name) => {
 
 	console.log("Building…");
 	let progressNotification = new NotificationRequest;
-	progressNotification.title = nova.localize("Still downloading Pyright");
+	progressNotification.title = nova.localize("Still Downloading Pyright");
 	progressNotification.body = nova.localize("Just one more second…");
 	nova.notifications.add(progressNotification);
 

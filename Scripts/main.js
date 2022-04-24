@@ -188,7 +188,7 @@ function registerCommands(dataProvider) {
 			// If it does, I'm sorry. I didn't mean to.
 			let actionNotificationRequest = new NotificationRequest;
 			actionNotificationRequest.title =
-				nova.localize("Provide permission to delete a directory");
+				nova.localize("Provide Permission to Delete a Directory");
 			actionNotificationRequest.body =
 				`To use the bundled server, the extension needs to remove ${updatedPath}. This is where the updated version of Pyright was downloaded.`;
 			actionNotificationRequest.actions = [

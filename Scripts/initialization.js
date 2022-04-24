@@ -46,7 +46,7 @@ exports.ensureLanguageServer = async function ensureLanguageServer() {
 
 	let announcementRequest = new NotificationRequest;
 	announcementRequest.title =
-		nova.localize("Pyright is being downloaded");
+		nova.localize("Pyright Is Being Downloaded");
 	announcementRequest.body =
 		nova.localize("Please wait until this process finishes. Language features will be enabled in a moment.");
 	nova.notifications.add(announcementRequest);
@@ -75,7 +75,7 @@ exports.ensureLanguageServer = async function ensureLanguageServer() {
 
 	let completionRequest = new NotificationRequest;
 	completionRequest.title =
-		nova.localize("Pyright was downloaded");
+		nova.localize("Pyright Was Downloaded");
 	completionRequest.body =
 		nova.localize(
 			"Language features should now be enabled. If you find that this isn't the case, please file an issue on GitHub. Include the following sequence of Emoji: "
