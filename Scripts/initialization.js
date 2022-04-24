@@ -23,7 +23,7 @@ function markAsFinished () {
 	nova.fs.open(FINISH_MARKER_LOCATION, "x");
 }
 function isFinished () {
-	exists(FINISH_MARKER_LOCATION);
+	return exists(FINISH_MARKER_LOCATION);
 }
 function getRandomSequenceOfEmoji (limit) {
 	const emoji = ["🌏", "🔦", "🦕", "📒", "🥳", "🐍", "🥓", "🦞", "🪰", "🐞", "🦎"];
@@ -71,6 +71,7 @@ exports.ensureLanguageServer = async function ensureLanguageServer() {
 
 	// is unlocked
 	await downloadLanguageServer("primary");
+	markAsFinished();
 
 	let completionRequest = new NotificationRequest;
 	completionRequest.title =
@@ -84,8 +85,6 @@ exports.ensureLanguageServer = async function ensureLanguageServer() {
 		nova.localize("OK"),
 	];
 	nova.notifications.add(completionRequest);
-
-	markAsFinished();
 };
 
 exports.forcefullyUnlock = unlock;
