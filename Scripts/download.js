@@ -70,7 +70,7 @@ exports.downloadLanguageServer = async (name) => {
 	await unzip(archivePath, dirname);
 
 	console.log("Installing Pyright dependencies…");
-	console.log("Taking a while? Please wait. Some logging should ensure. It might take some time.");
+	console.log("Taking a while? Please wait. Some logging should ensue. It might take some time.");
 	async function tryToInstall () {
 		try {
 			await install(dirname);
