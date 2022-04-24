@@ -4,7 +4,7 @@
 	"organization": "belcar-s",
 	"description": "A Python extension powered by Microsoft's Pyright Language Server.",
 	"main": "main.js",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"entitlements": {
 		"process": true,
 		"filesystem": "readwrite",

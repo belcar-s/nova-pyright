@@ -1,3 +1,6 @@
+## 1.0.3
+A spelling mistake was fixed.
+
 ## 1.0.2
 The download process should now more reliably be completed successfully.
 
