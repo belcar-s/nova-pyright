@@ -12,7 +12,7 @@ function startProcess(location, args, cwd) {
 		args,
 		cwd
 	};
-	console.log(JSON.stringify(options));
+	console.log(location, args.join(" "));
 	const process = new Process(location, options);
 	process.onStdout(line => console.log(line));
 
@@ -58,7 +58,6 @@ exports.downloadLanguageServer = async (name) => {
 
 	const address = `https://github.com/microsoft/pyright/archive/refs/tags/${version}.zip`;
 	console.log(address);
-	console.log(downloadPath, name, ".zip");
 	const archivePath = nova.path.join(downloadPath, name + ".zip");
 	console.log(archivePath);
 	await download(address, archivePath);
