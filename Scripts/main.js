@@ -1,5 +1,6 @@
 const {
 	serverPaths,
+	serverFolders,
 	USER_PATH_CONFIG_KEY
 } = require("./paths.js");
 const { StatusDataProvider } = require("./StatusDataProvider.js");
@@ -182,7 +183,7 @@ function registerCommands(dataProvider) {
 				nova.localize("To use the built-in server, empty the text box labelled 'Server Location'.");
 			nova.notifications.add(errorNotificationRequest);
 		} else {
-			const updatedPath = serverPaths().updated;
+			const updatedPath = serverFolders().updated;
 			// I'm very anxious of that this deletes everything.
 			// If it does, I'm sorry. I didn't mean to.
 			let actionNotificationRequest = new NotificationRequest;

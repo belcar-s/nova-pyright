@@ -21,5 +21,10 @@ exports.serverPaths = () => ({
 	user: nova.config.get(CONFIG_KEY),
 });
 
+exports.serverFolders = () => ({
+	primary: nova.path.join(parentDirectoryPath, "primary"),
+	updated: nova.path.join(parentDirectoryPath, "updated")
+});
+
 exports.USER_PATH_CONFIG_KEY = CONFIG_KEY;
 exports.downloadPath = parentDirectoryPath;
