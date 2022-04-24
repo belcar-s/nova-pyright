@@ -1,4 +1,4 @@
-const downloadPath = require("./paths.js");
+const { downloadPath } = require("./paths.js");
 
 async function getLatestVersionNumber () {
 	const redirectLink = "https://github.com/microsoft/pyright/releases/latest";
@@ -13,7 +13,7 @@ function startProcess(location, args, cwd) {
 		cwd
 	};
 	const process = new Process(location, options);
-	process.onStdout(console.log);
+	process.onStdout(line => console.log(line));
 
 	const onExit = new Promise((resolve, reject) => {
 		process.onDidExit(status => {
@@ -52,7 +52,10 @@ exports.downloadLanguageServer = async (name) => {
 	console.log("Going to download Pyright version " + version);
 
 	const address = `https://github.com/microsoft/pyright/archive/refs/tags/${version}.zip`;
+	console.log(address);
+	console.log(downloadPath, name, ".zip");
 	const archivePath = nova.path.join(downloadPath, name + ".zip");
+	console.log(archivePath);
 	await download(address, archivePath);
 
 	console.log("Downloaded archive.");

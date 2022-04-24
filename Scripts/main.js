@@ -5,16 +5,17 @@ const {
 const { StatusDataProvider } = require("./StatusDataProvider.js");
 const { PyrightLanguageServer } = require("./PyrightLanguageServer.js");
 const { downloadLanguageServer } = require("./download.js");
+const { forcefullyUnlock, ensureLanguageServer } = require("./initialization.js");
 
 let languageServer;
 
 exports.activate = async function () {
 	nova.commands.register("unlockInit", () => {
-		nova.config.set("belcar.pyright.lockinit", false);
+		forcefullyUnlock();
 	});
-	
+
 	await ensureLanguageServer();
-	
+
 	// This function loads the sidebar. It then returns
 	// a StatusDataProvider, which is used to update
 	// status information on the sidebar.
@@ -24,44 +25,6 @@ exports.activate = async function () {
 
 	registerCommands(dataProvider);
 };
-async function ensureLanguageServer() {
-	function exists(path) {
-		return !!nova.fs.stat(path);
-	}
-
-	if (nova.config.get("belcar.pyright.lockinit")) {
-		console.log("Initialization is locked.");
-		return new Promise(resolve => {
-			nova.config.onDidChange("belcar.pyright.lockinit", value => {
-				if (value == false) {
-					console.log("Unlocked.");
-					resolve();
-				}
-			});
-		});
-	}
-
-	nova.config.set("belcar.pyright.lockinit", true);
-
-	const primaryPath = serverPaths().primary;
-	if (!exists(primaryPath)) {
-		let notificationRequest = new NotificationRequest;
-		notificationRequest.title = nova.localize("Downloading Pyright…");
-		notificationRequest.body = nova.localize("Before you can use Pyright, it needs to be downloaded. Please wait.");
-		
-		nova.notifications.add(notificationRequest);
-		
-		await downloadLanguageServer("primary");
-		
-		let finishedNotificationRequest = new NotificationRequest;
-		finishedNotificationRequest.title = nova.localize("Finished downloading Pyright for the first time");
-		finishedNotificationRequest.body = nova.localize("Language features will be enabled in a moment.");
-		
-		nova.notifications.add(finishedNotificationRequest);
-	}
-	
-	nova.config.set("belcar.pyright.lockinit", false);
-}
 function loadSidebar() {
 	const SECTION_ID = "pyright.status-details";
 
@@ -223,7 +186,7 @@ function registerCommands(dataProvider) {
 			// I'm very anxious of that this deletes everything.
 			// If it does, I'm sorry. I didn't mean to.
 			let actionNotificationRequest = new NotificationRequest;
-			actionNotificationRequest.title = 
+			actionNotificationRequest.title =
 				nova.localize("Provide permission to delete a directory");
 			actionNotificationRequest.body =
 				`To use the bundled server, the extension needs to remove ${updatedPath}. This is where the updated version of Pyright was downloaded.`;
@@ -231,7 +194,7 @@ function registerCommands(dataProvider) {
 				nova.localize("Cancel"),
 				nova.localize("Remove folder"),
 			];
-			
+
 			const reply = await nova.notifications.add(actionNotificationRequest);
 			if (reply.actionIdx == 1) {
 				nova.fs.rmdir(updatedPath);
