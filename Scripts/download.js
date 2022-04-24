@@ -70,7 +70,21 @@ exports.downloadLanguageServer = async (name) => {
 	await unzip(archivePath, dirname);
 
 	console.log("Installing Pyright dependencies…");
-	await install(dirname);
+	async function tryToInstall () {
+		try {
+			await install(dirname);
+		} catch {
+			let failureNotificationRequest = new NotificationRequest;
+			failureNotificationRequest.title = nova.localize("NPM Might Not Be Installed");
+			failureNotificationRequest.body = nova.localize("Install NPM and try again.");
+			failureNotificationRequest.actions = [
+				nova.localize("Retry")
+			];
+			await nova.notifications.add(failureNotificationRequest);
+			tryToInstall();
+		}
+	}
+	tryToInstall();
 
 	console.log("Building…");
 	let progressNotification = new NotificationRequest;
