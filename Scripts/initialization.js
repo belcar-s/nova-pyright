@@ -25,6 +25,19 @@ function markAsFinished () {
 function isFinished () {
 	exists(FINISH_MARKER_LOCATION);
 }
+function getRandomSequenceOfEmoji (limit) {
+	const emoji = ["🌏", "🔦", "🦕", "📒", "🥳", "🐍", "🥓", "🦞", "🪰", "🐞", "🦎"];
+	function getRandomEmoji () {
+		const index = Math.floor(Math.random() * emoji.length);
+		return emoji[index];
+	}
+
+	let output = "";
+	for (let n = 0; n <= limit; n++) {
+		output += getRandomEmoji();
+	}
+	return output;
+}
 
 exports.ensureLanguageServer = async function ensureLanguageServer() {
 	if (isFinished()) {
@@ -63,7 +76,13 @@ exports.ensureLanguageServer = async function ensureLanguageServer() {
 	completionRequest.title =
 		nova.localize("Pyright was downloaded");
 	completionRequest.body =
-		nova.localize("Language features should now be enabled. If you find that that isn't the case, please file an issue on GitHub. Include the following error code: 🌏📒🦕🔦");
+		nova.localize(
+			"Language features should now be enabled. If you find that this isn't the case, please file an issue on GitHub. Include the following sequence of Emoji: "
+			+ getRandomSequenceOfEmoji(5)
+		);
+	completionRequest.actions = [
+		nova.localize("OK"),
+	];
 	nova.notifications.add(completionRequest);
 
 	markAsFinished();
