@@ -84,7 +84,7 @@ exports.downloadLanguageServer = async (name) => {
 			tryToInstall();
 		}
 	}
-	tryToInstall();
+	await tryToInstall();
 
 	console.log("Building…");
 	let progressNotification = new NotificationRequest;
