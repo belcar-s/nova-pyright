@@ -24,8 +24,12 @@
         "semi": [
             "error",
             "always"
-        ],
-        "no-undef": "off",
-        "no-empty": "off"
+        ]
+    },
+    "globals": {
+        "nova": true,
+        "TreeView": true,
+        "NotificationRequest": true,
+        "Process": true
     }
 }

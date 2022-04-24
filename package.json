@@ -1,6 +1,6 @@
 {
   "devDependencies": {
     "@types/nova-editor": "^1.0.0",
-    "eslint": "^8.12.0"
+    "eslint": "^8.14.0"
   }
 }
