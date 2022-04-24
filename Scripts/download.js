@@ -18,7 +18,7 @@ function startProcess(location, args, cwd) {
 
 	const onExit = new Promise((resolve, reject) => {
 		process.onDidExit(status => {
-			console.log(`Exitted ${location} with code ${status}`);
+			console.log(`Exited ${location} with code ${status}`);
 			const action = status == 0 ? resolve : reject;
 			action(status);
 		});
