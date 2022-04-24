@@ -73,6 +73,11 @@ exports.downloadLanguageServer = async (name) => {
 	await install(dirname);
 
 	console.log("Building…");
+	let progressNotification = new NotificationRequest;
+	progressNotification.title = nova.localize("Still downloading Pyright");
+	progressNotification.body = nova.localize("Just one more second…");
+	nova.notifications.add(progressNotification);
+
 	await runTask(
 		"build",
 		nova.path.join(dirname, "packages", "pyright"),
