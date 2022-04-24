@@ -12,6 +12,7 @@ function startProcess(location, args, cwd) {
 		args,
 		cwd
 	};
+	console.log(JSON.stringify(options));
 	const process = new Process(location, options);
 	process.onStdout(line => console.log(line));
 
@@ -49,7 +50,7 @@ exports.downloadLanguageServer = async (name) => {
 	console.log("Downloading " + name + ".");
 	const version = await getLatestVersionNumber();
 
-	console.log("Going to download Pyright version " + version);
+	console.log("Going to download Pyright version " + version + ".");
 
 	const address = `https://github.com/microsoft/pyright/archive/refs/tags/${version}.zip`;
 	console.log(address);
