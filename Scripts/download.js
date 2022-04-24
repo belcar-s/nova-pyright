@@ -33,7 +33,7 @@ function download (url, outputPath) {
 }
 async function unzip (file, outputPath) {
 	const tempPath = outputPath + "temp";
-	const args = [file, "-d", tempPath];
+	const args = ["-q", file, "-d", tempPath];
 	await startProcess("/usr/bin/unzip", args);
 	const directory = nova.path.join(tempPath, nova.fs.listdir(tempPath)[0]);
 	await startProcess("/bin/mv", [directory, outputPath]);
