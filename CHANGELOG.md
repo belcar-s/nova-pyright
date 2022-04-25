@@ -1,3 +1,9 @@
+## 1.1.1
+- An issue was fixed that may have produced undesirable behavior during the installation of updated versions of Pyright.
+- A "Retry" button is again shown upon failure to install Pyright due to the absence of NPM.
+- A button is now displayed in the Extension Library which leads to the extension's GitHub repository page.
+- The extension now consumes less space and takes less time to uninstall.
+
 ## 1.1.0
 The download process was greatly sped up.
 
