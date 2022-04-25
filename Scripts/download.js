@@ -31,7 +31,21 @@ exports.downloadLanguageServer = async (name) => {
 	const tempDirPath = nova.path.join(downloadPath, tempDirName);
 	const args = ["npm", "i", "pyright", "--no-save", "--prefix", tempDirName];
 	const cwd = downloadPath;
-	await startProcess("/usr/bin/env", args, cwd);
+	async function tryToInstall () {
+		try {
+			await startProcess("/usr/bin/env", args, cwd);
+		} catch {
+			let failureNotificationRequest = new NotificationRequest;
+			failureNotificationRequest.title = nova.localize("NPM Might Not Be Installed");
+			failureNotificationRequest.body = nova.localize("Install NPM and try again.");
+			failureNotificationRequest.actions = [
+				nova.localize("Retry")
+			];
+			await nova.notifications.add(failureNotificationRequest);
+			tryToInstall();
+		}
+	}
+	await tryToInstall();
 
 	const pyrightDownloadLocation = nova.path.join(tempDirPath, "node_modules", "pyright");
 	const finalPyrightLocation = nova.path.join(downloadPath, name);
