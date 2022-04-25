@@ -54,4 +54,5 @@ exports.downloadLanguageServer = async (name) => {
 	const pyrightDownloadLocation = nova.path.join(tempDirPath, "node_modules", "pyright");
 	const finalPyrightLocation = nova.path.join(downloadPath, name);
 	await move(pyrightDownloadLocation, finalPyrightLocation);
+	nova.fs.rmdir(tempDirPath);
 };
