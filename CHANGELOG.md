@@ -1,3 +1,6 @@
+## 1.1.0
+The download process was greatly sped up.
+
 ## 1.0.3
 A spelling mistake was fixed.
 
