@@ -34,15 +34,19 @@ exports.downloadLanguageServer = async (name) => {
 	async function tryToInstall () {
 		try {
 			await startProcess("/usr/bin/env", args, cwd);
-		} catch {
-			let failureNotificationRequest = new NotificationRequest;
-			failureNotificationRequest.title = nova.localize("NPM Might Not Be Installed");
-			failureNotificationRequest.body = nova.localize("Install NPM and try again.");
-			failureNotificationRequest.actions = [
-				nova.localize("Retry")
-			];
-			await nova.notifications.add(failureNotificationRequest);
-			tryToInstall();
+		} catch (e) {
+			if (e == 127) {
+				let failureNotificationRequest = new NotificationRequest;
+				failureNotificationRequest.title = nova.localize("NPM Might Not Be Installed");
+				failureNotificationRequest.body = nova.localize("Install NPM and try again.");
+				failureNotificationRequest.actions = [
+					nova.localize("Retry")
+				];
+				await nova.notifications.add(failureNotificationRequest);
+				tryToInstall();
+			} else {
+				throw e;
+			}
 		}
 	}
 	await tryToInstall();
