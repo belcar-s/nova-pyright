@@ -55,13 +55,14 @@ exports.ensureLanguageServer = async function ensureLanguageServer() {
 		lock();
 	} catch {
 		// is locked
-
+		console.log("Initialization is locked.");
 		return new Promise(resolve => {
 			function awaitUnlock () {
 				if (exists(LOCK_LOCATION)) {
 					// try in at least 500ms
 					setTimeout(awaitUnlock, LOCK_INTERVAL);
 				} else {
+					console.log("Unlocked!!!");
 					resolve();
 				}
 			}

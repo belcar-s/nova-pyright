@@ -5,7 +5,6 @@ function getServerPath(name) {
 	return nova.path.join(
 		parentDirectoryPath,
 		name,
-		"packages",
 		"pyright",
 		"langserver.index.js" // Entrypoint
 	);

@@ -1,12 +1,5 @@
 const { downloadPath } = require("./paths.js");
 
-async function getLatestVersionNumber () {
-	const redirectLink = "https://github.com/microsoft/pyright/releases/latest";
-	const response = await fetch(redirectLink);
-
-	const parts = response.url.split("/");
-	return parts[parts.length - 1];
-}
 function startProcess(location, args, cwd) {
 	const options = {
 		args,
@@ -27,79 +20,20 @@ function startProcess(location, args, cwd) {
 	process.start();
 	return onExit;
 }
-function download (url, outputPath) {
-	console.log(url, outputPath);
-	const args = [url, "-L", "--output", outputPath];
-	return startProcess("/usr/bin/curl", args);
-}
-async function unzip (file, outputPath) {
-	const tempPath = outputPath + "temp";
-	const args = ["-q", file, "-d", tempPath];
-	await startProcess("/usr/bin/unzip", args);
-	const directory = nova.path.join(tempPath, nova.fs.listdir(tempPath)[0]);
-	await startProcess("/bin/mv", [directory, outputPath]);
-	nova.fs.rmdir(tempPath);
-}
-function install (directory) {
-	const cwd = directory;
-	const args = ["npm", "install"];
-	return startProcess("/usr/bin/env", args, cwd);
-}
-function runTask (task, directory) {
-	const args = ["npm", "run", task];
-	const cwd = directory;
-	return startProcess("/usr/bin/env", args, cwd);
+function move (origin, destination) {
+	const args = [origin, destination];
+	return startProcess("/bin/mv", args);
 }
 
 exports.downloadLanguageServer = async (name) => {
 	console.log("Downloading " + name + ".");
-	const version = await getLatestVersionNumber();
+	const tempDirName = "Temporary location of " + name;
+	const tempDirPath = nova.path.join(downloadPath, tempDirName);
+	const args = ["npm", "i", "pyright", "--no-save", "--prefix", tempDirName];
+	const cwd = downloadPath;
+	await startProcess("/usr/bin/env", args, cwd);
 
-	console.log("Going to download Pyright version " + version + ".");
-
-	const address = `https://github.com/microsoft/pyright/archive/refs/tags/${version}.zip`;
-	console.log(address);
-	const archivePath = nova.path.join(downloadPath, name + ".zip");
-	console.log(archivePath);
-	await download(address, archivePath);
-
-	console.log("Downloaded archive.");
-	console.log("Extracting…");
-
-	const dirname = nova.path.join(downloadPath, name);
-	await unzip(archivePath, dirname);
-
-	console.log("Installing Pyright dependencies…");
-	console.log("Taking a while? Please wait. Some logging should ensue. It might take some time.");
-	async function tryToInstall () {
-		try {
-			await install(dirname);
-		} catch {
-			let failureNotificationRequest = new NotificationRequest;
-			failureNotificationRequest.title = nova.localize("NPM Might Not Be Installed");
-			failureNotificationRequest.body = nova.localize("Install NPM and try again.");
-			failureNotificationRequest.actions = [
-				nova.localize("Retry")
-			];
-			await nova.notifications.add(failureNotificationRequest);
-			tryToInstall();
-		}
-	}
-	await tryToInstall();
-
-	console.log("Building…");
-	console.log("Sorry that it's taking so long. If you know how to make this faster, please open an issue at belcar-s/nova-pyright.");
-	let progressNotification = new NotificationRequest;
-	progressNotification.title = nova.localize("Still Downloading Pyright");
-	progressNotification.body = nova.localize("Just one more second…");
-	nova.notifications.add(progressNotification);
-
-	await runTask(
-		"build",
-		nova.path.join(dirname, "packages", "pyright"),
-	);
-
-	console.log(dirname);
-
-	nova.fs.remove(archivePath);
+	const pyrightDownloadLocation = nova.path.join(tempDirPath, "node_modules", "pyright");
+	const finalPyrightLocation = nova.path.join(downloadPath, name);
+	await move(pyrightDownloadLocation, finalPyrightLocation);
 };
