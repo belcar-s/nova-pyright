@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-	"outDir": "./Scripts",
+	"outFile": "./Scripts/main.dist.js",
 	"allowJs": true,
 	"target": "ES2021"
   },

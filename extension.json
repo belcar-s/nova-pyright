@@ -4,7 +4,8 @@
 	"organization": "belcar-s",
 	"description": "A Python extension powered by Microsoft's Pyright Language Server.",
 	"repository": "https://github.com/belcar-s/nova-pyright",
-	"main": "main.js",
+	"main": "main.dist.js",
+	"license": "MIT",
 	"version": "1.1.1",
 	"entitlements": {
 		"process": true,
