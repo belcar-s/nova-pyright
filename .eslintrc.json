@@ -1,4 +1,5 @@
 {
+    "ignorePatterns": ["Scripts"],
     "env": {
         "browser": true,
         "commonjs": true,
