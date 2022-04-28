@@ -1,8 +1,2 @@
-extract_temp/*
-primary.tar.gz
-primary/*
-updated/*
-updated.tar.gz
-
-requests.tar.gz
-requests/*
+*
+!README.md
