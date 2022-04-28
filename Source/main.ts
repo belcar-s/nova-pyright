@@ -1,15 +1,11 @@
-const {
-	serverPaths,
-	serverFolders,
-	USER_PATH_CONFIG_KEY
-} = require("./paths.js");
-const { StatusDataProvider } = require("./StatusDataProvider.js");
-const { PyrightLanguageServer } = require("./PyrightLanguageServer.js");
-const { downloadLanguageServer } = require("./download.js");
-const { forcefullyUnlock, ensureLanguageServer } = require("./initialization.js");
-const { LSPrangeToRange } = require("./LSPedits.js");
+import { serverPaths, serverFolders, USER_PATH_CONFIG_KEY } from "./paths.js";
+import { StatusDataProvider } from "./StatusDataProvider.js";
+import { PyrightLanguageServer } from "./PyrightLanguageServer.js";
+import { downloadLanguageServer } from "./download.js";
+import { forcefullyUnlock, ensureLanguageServer } from "./initialization.js";
+import { LSPrangeToRange } from "./LSPedits.js";
 
-let languageServer;
+let languageServer: PyrightLanguageServer | undefined;
 
 exports.activate = async function () {
 	nova.commands.register("unlockInit", () => {
@@ -39,7 +35,7 @@ function loadSidebar() {
 
 	return dataProvider;
 }
-function restartServer(dataProvider) {
+function restartServer(dataProvider: StatusDataProvider) {
 	if (languageServer) {
 		languageServer.deactivate();
 	}
@@ -56,8 +52,8 @@ function restartServer(dataProvider) {
 	// load it :)
 	loadLanguageServer(languageServer, dataProvider);
 }
-function loadLanguageServer(server, dataProvider) {
-	function loadJSON(path) {
+function loadLanguageServer(server: PyrightLanguageServer, dataProvider: StatusDataProvider) {
+	function loadJSON(path: string) {
 		const file = nova.fs.open(path) as FileTextMode;
 		const lines = file.readlines();
 		const contents = lines.join("\n");
@@ -110,20 +106,20 @@ function loadLanguageServer(server, dataProvider) {
 		}
 	}, 1000);
 }
-function registerCommands(dataProvider) {
+function registerCommands(dataProvider: StatusDataProvider) {
 	nova.commands.register("restartLanguageServer", () => {
 		languageServer.deactivate();
 		loadLanguageServer(languageServer, dataProvider);
 	});
 
-	function getEditingLSPcommandCallback (command) {
-		return async (editor) => {
+	function getEditingLSPcommandCallback (command: string) {
+		return async (editor: TextEditor) => {
 			const languageClient = languageServer.languageClient;
 			const parameters = {
 				command,
 				arguments: [editor.document.uri]
 			};
-			let edits = await languageClient.sendRequest("workspace/executeCommand", parameters);
+			let edits: any = await languageClient.sendRequest("workspace/executeCommand", parameters);
 			console.log(edits);
 			if (edits?.length > 0) {
 				// This 'if' statement is not to make an unneeded edit,
