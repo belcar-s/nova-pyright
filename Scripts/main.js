@@ -114,6 +114,7 @@ function registerCommands(dataProvider) {
 	});
 
 	let isDownloading = false;
+	console.log(isDownloading);
 	nova.commands.register("updateLanguageServer", async () => {
 		if (isDownloading) {
 			let alreadyStartedNotificationRequest = new NotificationRequest;
