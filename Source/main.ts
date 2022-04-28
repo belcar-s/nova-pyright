@@ -1,4 +1,4 @@
-import { serverPaths, serverFolders, USER_PATH_CONFIG_KEY } from "./paths.js";
+import { serverPaths, serverFolders, USER_PATH_CONFIG_KEY } from "./paths";
 import { StatusDataProvider } from "./StatusDataProvider.js";
 import { PyrightLanguageServer } from "./PyrightLanguageServer.js";
 import { downloadLanguageServer } from "./download.js";
