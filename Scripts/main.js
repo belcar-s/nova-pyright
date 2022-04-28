@@ -7,6 +7,7 @@ const { StatusDataProvider } = require("./StatusDataProvider.js");
 const { PyrightLanguageServer } = require("./PyrightLanguageServer.js");
 const { downloadLanguageServer } = require("./download.js");
 const { forcefullyUnlock, ensureLanguageServer } = require("./initialization.js");
+const { LSPrangeToRange } = require("./LSPedits.js");
 
 let languageServer;
 
@@ -112,6 +113,36 @@ function registerCommands(dataProvider) {
 		languageServer.deactivate();
 		loadLanguageServer(languageServer, dataProvider);
 	});
+
+	function getEditingLSPcommandCallback (command) {
+		return async (editor) => {
+			const languageClient = languageServer.languageClient;
+			const parameters = {
+				command,
+				arguments: [editor.document.uri]
+			};
+			let edits = await languageClient.sendRequest("workspace/executeCommand", parameters);
+			console.log(edits);
+			if (edits?.length > 0) {
+				// This 'if' statement is not to make an unneeded edit,
+				// which supposedly adds to the undo stack.
+				editor.edit((textEditorEdit) => {
+					for (let change of edits.reverse()) {
+						const range = LSPrangeToRange(editor.document, change.range);
+						textEditorEdit.replace(range, change.newText);
+					}
+				});
+			}
+		};
+	}
+	nova.commands.register(
+		"orderImports",
+		getEditingLSPcommandCallback("pyright.organizeimports")
+	);
+	nova.commands.register(
+		"addMissingOptionalParam",
+		getEditingLSPcommandCallback("pyright.addoptionalforparam")
+	);
 
 	let isDownloading = false;
 	console.log(isDownloading);
