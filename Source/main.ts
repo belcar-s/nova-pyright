@@ -119,13 +119,12 @@ function registerCommands(dataProvider: StatusDataProvider) {
 				command,
 				arguments: [editor.document.uri]
 			};
-			let edits: any = await languageClient.sendRequest("workspace/executeCommand", parameters);
-			console.log(edits);
+			const edits: any = await languageClient.sendRequest("workspace/executeCommand", parameters);
 			if (edits?.length > 0) {
 				// This 'if' statement is not to make an unneeded edit,
 				// which supposedly adds to the undo stack.
 				editor.edit((textEditorEdit) => {
-					for (let change of edits.reverse()) {
+					for (const change of edits.reverse()) {
 						const range = LSPrangeToRange(editor.document, change.range);
 						textEditorEdit.replace(range, change.newText);
 					}
