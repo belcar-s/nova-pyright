@@ -25,7 +25,7 @@
 	"commands": {
 		"editor": [
 			{
-				"title": "Order Imports",
+				"title": "Organize Imports",
 				"command": "orderImports",
 				"filters": {
 					"syntaxes": [
