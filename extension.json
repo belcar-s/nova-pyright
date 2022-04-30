@@ -5,7 +5,6 @@
 	"description": "A Python extension powered by Microsoft's Pyright Language Server.",
 	"repository": "https://github.com/belcar-s/nova-pyright",
 	"main": "main.js",
-	"license": "MIT",
 	"version": "1.2.0",
 	"entitlements": {
 		"process": true,
