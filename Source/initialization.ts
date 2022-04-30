@@ -1,11 +1,11 @@
-const { downloadPath } = require("./paths.js");
-const { downloadLanguageServer } = require("./download.js");
+import { downloadPath } from "./paths.js";
+import { downloadLanguageServer } from "./download.js";
 
 const LOCK_INTERVAL = 500; // (ms)
 const LOCK_LOCATION = nova.path.join(downloadPath, "LOCK!");
 const FINISH_MARKER_LOCATION = nova.path.join(downloadPath, "MARKER");
 
-function exists (path) {
+function exists (path: string) {
 	return !!nova.fs.stat(path);
 }
 
@@ -25,7 +25,7 @@ function markAsFinished () {
 function isFinished () {
 	return exists(FINISH_MARKER_LOCATION);
 }
-function getRandomSequenceOfEmoji (limit) {
+function getRandomSequenceOfEmoji (limit: number) {
 	const emoji = ["🌏", "🔦", "🦕", "📒", "🥳", "🐍", "🥓", "🦞", "🪰", "🐞", "🦎"];
 	function getRandomEmoji () {
 		const index = Math.floor(Math.random() * emoji.length);
@@ -39,11 +39,12 @@ function getRandomSequenceOfEmoji (limit) {
 	return output;
 }
 
-exports.ensureLanguageServer = async function ensureLanguageServer() {
+export async function ensureLanguageServer(): Promise<undefined> {
 	if (isFinished()) {
 		return;
 	}
 
+	//@ts-ignore
 	let announcementRequest = new NotificationRequest;
 	announcementRequest.title =
 		nova.localize("Pyright Is Being Downloaded");
@@ -63,7 +64,7 @@ exports.ensureLanguageServer = async function ensureLanguageServer() {
 					setTimeout(awaitUnlock, LOCK_INTERVAL);
 				} else {
 					console.log("Unlocked!!!");
-					resolve();
+					resolve(undefined);
 				}
 			}
 			setTimeout(awaitUnlock, LOCK_INTERVAL);
@@ -74,6 +75,7 @@ exports.ensureLanguageServer = async function ensureLanguageServer() {
 	await downloadLanguageServer("primary");
 	markAsFinished();
 
+	//@ts-ignore
 	let completionRequest = new NotificationRequest;
 	completionRequest.title =
 		nova.localize("Pyright Was Downloaded");
@@ -86,6 +88,6 @@ exports.ensureLanguageServer = async function ensureLanguageServer() {
 		nova.localize("OK"),
 	];
 	nova.notifications.add(completionRequest);
-};
+}
 
-exports.forcefullyUnlock = unlock;
+export { unlock as forcefullyUnlock };

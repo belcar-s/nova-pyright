@@ -1,6 +1,6 @@
-const { downloadPath } = require("./paths.js");
+import { downloadPath } from "./paths.js";
 
-function startProcess(location, args, cwd) {
+function startProcess(location: string, args: string[], cwd?: string) {
 	const options = {
 		args,
 		cwd
@@ -20,12 +20,12 @@ function startProcess(location, args, cwd) {
 	process.start();
 	return onExit;
 }
-function move (origin, destination) {
+function move (origin: string, destination: string) {
 	const args = [origin, destination];
 	return startProcess("/bin/mv", args);
 }
 
-exports.downloadLanguageServer = async (name) => {
+export async function downloadLanguageServer (name: string) {
 	console.log("Downloading " + name + ".");
 	const tempDirName = "Temporary location of " + name;
 	const tempDirPath = nova.path.join(downloadPath, tempDirName);
@@ -36,6 +36,7 @@ exports.downloadLanguageServer = async (name) => {
 			await startProcess("/usr/bin/env", args, cwd);
 		} catch (e) {
 			if (e == 127) {
+				//@ts-ignore
 				let failureNotificationRequest = new NotificationRequest;
 				failureNotificationRequest.title = nova.localize("NPM Might Not Be Installed");
 				failureNotificationRequest.body = nova.localize("Install NPM and try again.");
@@ -55,4 +56,4 @@ exports.downloadLanguageServer = async (name) => {
 	const finalPyrightLocation = nova.path.join(downloadPath, name);
 	await move(pyrightDownloadLocation, finalPyrightLocation);
 	nova.fs.rmdir(tempDirPath);
-};
+}
