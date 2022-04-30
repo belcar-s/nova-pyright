@@ -80,7 +80,7 @@ function loadLanguageServer(server: PyrightLanguageServer, dataProvider: StatusD
 
 		// inform the user of the error
 
-		//@ts-ignore: NotificationRequest's parameter is optional
+		//@ts-expect-error: NotificationRequest's parameter is optional.
 		const notificationRequest = new NotificationRequest;
 		notificationRequest.title =
 			nova.localize("Pyright Language Server Stopped");
@@ -145,7 +145,7 @@ function registerCommands(dataProvider: StatusDataProvider) {
 	console.log(isDownloading);
 	nova.commands.register("updateLanguageServer", async () => {
 		if (isDownloading) {
-			//@ts-ignore: NotificationRequest's parameter is optional
+			//@ts-expect-error: NotificationRequest's parameter is optional.
 			const alreadyStartedNotificationRequest = new NotificationRequest;
 			alreadyStartedNotificationRequest.title =
 				nova.localize("Cannot Download Right Now");
@@ -159,7 +159,7 @@ function registerCommands(dataProvider: StatusDataProvider) {
 
 		// provide an immediate reaction
 
-		//@ts-ignore: NotificationRequest's parameter is optional
+		//@ts-expect-error: NotificationRequest's parameter is optional.
 		const initialNotificationRequest = new NotificationRequest;
 		initialNotificationRequest.title =
 			nova.localize("Downloading");
@@ -176,7 +176,7 @@ function registerCommands(dataProvider: StatusDataProvider) {
 			// This code runs if the script quits with a non-zero
 			// exit code.
 
-			//@ts-ignore: NotificationRequest's parameter is optional
+			//@ts-expect-error: NotificationRequest's parameter is optional.
 			const errorNotificationRequest = new NotificationRequest;
 			errorNotificationRequest.title =
 				nova.localize("Could Not Update Pyright");
@@ -194,7 +194,7 @@ function registerCommands(dataProvider: StatusDataProvider) {
 
 		// notify of completion
 
-		//@ts-ignore: NotificationRequest's parameter is optional
+		//@ts-expect-error: NotificationRequest's parameter is optional.
 		const completionNotificationRequest = new NotificationRequest;
 		completionNotificationRequest.title =
 			nova.localize("Download Completed");
@@ -213,7 +213,7 @@ function registerCommands(dataProvider: StatusDataProvider) {
 			// the server, switching to the bundled version will
 			// unfortunately involve invoking this command twice.
 
-			//@ts-ignore: NotificationRequest's parameter is optional
+			//@ts-expect-error: NotificationRequest's parameter is optional.
 			const errorNotificationRequest = new NotificationRequest;
 			errorNotificationRequest.title =
 				nova.localize("Configuration Change Needed");
@@ -225,7 +225,7 @@ function registerCommands(dataProvider: StatusDataProvider) {
 			// I'm very anxious of that this deletes everything.
 			// If it does, I'm sorry. I didn't mean to.
 
-			//@ts-ignore: NotificationRequest's parameter is optional
+			//@ts-expect-error: NotificationRequest's parameter is optional.
 			const actionNotificationRequest = new NotificationRequest;
 			actionNotificationRequest.title =
 				nova.localize("Provide Permission to Delete a Directory");
