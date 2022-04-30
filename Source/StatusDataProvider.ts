@@ -1,13 +1,25 @@
 // I think using a class is pretty.
-class Element {
-	constructor(name, value, { parent }) {
+export class Element {
+	name: string;
+	value: string;
+	parent: Element | null;
+
+	constructor(
+		name: string,
+		value: string,
+		{ parent }: { parent: Element | null }
+	) {
 		this.name = name;
 		this.value = value;
 		this.parent = parent;
 	}
 }
 
-class StatusDataProvider {
+export class StatusDataProvider implements TreeDataProvider<Element> {
+	status: Element;
+	version: Element;
+	treeView: TreeView<Element> | null;
+
 	constructor() {
 		// set a default status element
 		this.status = new Element(
@@ -23,18 +35,18 @@ class StatusDataProvider {
 			{ parent: null }
 		);
 
-		// assigned in `main.js`
+		// assigned in `main.ts`
 		this.treeView = null;
 	}
 
 	/*
 	Updaters */
-	updateStatus(newStatus) {
+	updateStatus(newStatus: string) {
 		this.status.value = newStatus;
 		this.treeView.reload(this.status);
 	}
 
-	updateVersion(newVersion) {
+	updateVersion(newVersion: string) {
 		this.version.value = newVersion;
 		this.treeView.reload(this.version);
 	}
@@ -42,7 +54,7 @@ class StatusDataProvider {
 	/*
 	TreeDataProvider Interface Methods */
 	// These methods are run by Nova.
-	getChildren(element) {
+	getChildren(element: Element | null) {
 		if (element == null) {
 			// `element == null` if this function's
 			// outcome determines the content of the
@@ -55,17 +67,16 @@ class StatusDataProvider {
 		}
 	}
 
-	getParent(element) {
+	getParent(element: Element | null) {
 		// This is optional.
 
 		// (?) I'm not sure this is effective.
 		return element.parent;
 	}
 
-	getTreeItem({name, value}) {
+	getTreeItem({name, value}: {name: string, value: string}) {
 		let item = new TreeItem(name);
 		item.descriptiveText = value;
 		return item;
 	}
 }
-exports.StatusDataProvider = StatusDataProvider;

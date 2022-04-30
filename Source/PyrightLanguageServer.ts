@@ -1,4 +1,4 @@
-function which(command) {
+function which(command: string): Promise<string> {
 	return new Promise((resolve) => {
 		const options = {
 			args: [command]
@@ -12,12 +12,17 @@ function which(command) {
 		process.start();
 	});
 }
-function exists(path) {
+function exists(path: string) {
 	return !!nova.fs.stat(path);
 }
 
 class AlreadyStartedError extends Error { }
-class PyrightLanguageServer {
+export class PyrightLanguageServer {
+	path: string
+	type: string
+	stopped: boolean
+	languageClient: undefined | LanguageClient
+
 	constructor({ serverPaths }) {
 		// pick the best path and set `this.type`
 		if (serverPaths.user) {
@@ -47,7 +52,7 @@ class PyrightLanguageServer {
 		const nodePath = await which("node");
 
 		console.log("Hi; sorry to bother. I'm starting the server.");
-		const serverOptions = {
+		const serverOptions: ServerOptions = {
 			path: nodePath,
 			args: [this.path, "--stdio"],
 			type: "stdio"
@@ -75,5 +80,3 @@ class PyrightLanguageServer {
 		this.stopped = true;
 	}
 }
-
-exports.PyrightLanguageServer = PyrightLanguageServer;

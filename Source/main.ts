@@ -1,5 +1,5 @@
 import { serverPaths, serverFolders, USER_PATH_CONFIG_KEY } from "./paths";
-import { StatusDataProvider } from "./StatusDataProvider.js";
+import { StatusDataProvider, Element } from "./StatusDataProvider.js";
 import { PyrightLanguageServer } from "./PyrightLanguageServer.js";
 import { downloadLanguageServer } from "./download.js";
 import { forcefullyUnlock, ensureLanguageServer } from "./initialization.js";
@@ -27,7 +27,7 @@ function loadSidebar() {
 	const SECTION_ID = "pyright.status-details";
 
 	const dataProvider = new StatusDataProvider();
-	const treeView = new TreeView(SECTION_ID, { dataProvider });
+	const treeView = new TreeView(SECTION_ID, { dataProvider }) as TreeView<Element>;
 	dataProvider.treeView = treeView;
 
 	// (?) The use of this is unknown to me.
