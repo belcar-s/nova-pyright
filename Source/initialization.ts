@@ -44,7 +44,7 @@ export async function ensureLanguageServer(): Promise<undefined> {
 		return;
 	}
 
-	//@ts-ignore
+	//@ts-expect-error: NotificationRequest's parameter is optional.
 	const announcementRequest = new NotificationRequest;
 	announcementRequest.title =
 		nova.localize("Pyright Is Being Downloaded");
@@ -75,7 +75,7 @@ export async function ensureLanguageServer(): Promise<undefined> {
 	await downloadLanguageServer("primary");
 	markAsFinished();
 
-	//@ts-ignore
+	//@ts-expect-error: NotificationRequest's parameter is optional.
 	const completionRequest = new NotificationRequest;
 	completionRequest.title =
 		nova.localize("Pyright Was Downloaded");

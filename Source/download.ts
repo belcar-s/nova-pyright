@@ -36,7 +36,7 @@ export async function downloadLanguageServer (name: string) {
 			await startProcess("/usr/bin/env", args, cwd);
 		} catch (e) {
 			if (e == 127) {
-				//@ts-ignore
+				//@ts-expect-error: NotificationRequest's parameter is optional.
 				const failureNotificationRequest = new NotificationRequest;
 				failureNotificationRequest.title = nova.localize("NPM Might Not Be Installed");
 				failureNotificationRequest.body = nova.localize("Install NPM and try again.");
