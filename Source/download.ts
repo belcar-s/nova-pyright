@@ -37,7 +37,7 @@ export async function downloadLanguageServer (name: string) {
 		} catch (e) {
 			if (e == 127) {
 				//@ts-ignore
-				let failureNotificationRequest = new NotificationRequest;
+				const failureNotificationRequest = new NotificationRequest;
 				failureNotificationRequest.title = nova.localize("NPM Might Not Be Installed");
 				failureNotificationRequest.body = nova.localize("Install NPM and try again.");
 				failureNotificationRequest.actions = [

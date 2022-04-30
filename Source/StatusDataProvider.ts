@@ -75,7 +75,7 @@ export class StatusDataProvider implements TreeDataProvider<Element> {
 	}
 
 	getTreeItem({name, value}: {name: string, value: string}) {
-		let item = new TreeItem(name);
+		const item = new TreeItem(name);
 		item.descriptiveText = value;
 		return item;
 	}

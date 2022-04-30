@@ -18,15 +18,15 @@ export function serverPaths () {
 
 		// User Path
 		user: nova.config.get(CONFIG_KEY),
-	}
-};
+	};
+}
 
 export function serverFolders () {
 	return {
 		primary: nova.path.join(parentDirectoryPath, "primary"),
 		updated: nova.path.join(parentDirectoryPath, "updated"),
-	}
-};
+	};
+}
 
 export const USER_PATH_CONFIG_KEY = CONFIG_KEY;
 export const downloadPath = parentDirectoryPath;

@@ -45,7 +45,7 @@ export async function ensureLanguageServer(): Promise<undefined> {
 	}
 
 	//@ts-ignore
-	let announcementRequest = new NotificationRequest;
+	const announcementRequest = new NotificationRequest;
 	announcementRequest.title =
 		nova.localize("Pyright Is Being Downloaded");
 	announcementRequest.body =
@@ -76,7 +76,7 @@ export async function ensureLanguageServer(): Promise<undefined> {
 	markAsFinished();
 
 	//@ts-ignore
-	let completionRequest = new NotificationRequest;
+	const completionRequest = new NotificationRequest;
 	completionRequest.title =
 		nova.localize("Pyright Was Downloaded");
 	completionRequest.body =

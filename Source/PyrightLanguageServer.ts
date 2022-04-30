@@ -3,7 +3,7 @@ function which(command: string): Promise<string> {
 		const options = {
 			args: [command]
 		};
-		let process = new Process("/usr/bin/which", options);
+		const process = new Process("/usr/bin/which", options);
 		process.onStdout((line) =>
 			// The value ends with a newline,
 			// which we need to remove.
@@ -18,10 +18,10 @@ function exists(path: string) {
 
 class AlreadyStartedError extends Error { }
 export class PyrightLanguageServer {
-	path: string
-	type: string
-	stopped: boolean
-	languageClient: undefined | LanguageClient
+	path: string;
+	type: string;
+	stopped: boolean;
+	languageClient: undefined | LanguageClient;
 
 	constructor({ serverPaths }) {
 		// pick the best path and set `this.type`

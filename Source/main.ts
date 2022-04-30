@@ -81,7 +81,7 @@ function loadLanguageServer(server: PyrightLanguageServer, dataProvider: StatusD
 		// inform the user of the error
 
 		//@ts-ignore: NotificationRequest's parameter is optional
-		let notificationRequest = new NotificationRequest;
+		const notificationRequest = new NotificationRequest;
 		notificationRequest.title =
 			nova.localize("Pyright Language Server Stopped");
 
@@ -146,7 +146,7 @@ function registerCommands(dataProvider: StatusDataProvider) {
 	nova.commands.register("updateLanguageServer", async () => {
 		if (isDownloading) {
 			//@ts-ignore: NotificationRequest's parameter is optional
-			let alreadyStartedNotificationRequest = new NotificationRequest;
+			const alreadyStartedNotificationRequest = new NotificationRequest;
 			alreadyStartedNotificationRequest.title =
 				nova.localize("Cannot Download Right Now");
 			alreadyStartedNotificationRequest.body =
@@ -160,7 +160,7 @@ function registerCommands(dataProvider: StatusDataProvider) {
 		// provide an immediate reaction
 
 		//@ts-ignore: NotificationRequest's parameter is optional
-		let initialNotificationRequest = new NotificationRequest;
+		const initialNotificationRequest = new NotificationRequest;
 		initialNotificationRequest.title =
 			nova.localize("Downloading");
 		initialNotificationRequest.body =
@@ -177,7 +177,7 @@ function registerCommands(dataProvider: StatusDataProvider) {
 			// exit code.
 
 			//@ts-ignore: NotificationRequest's parameter is optional
-			let errorNotificationRequest = new NotificationRequest;
+			const errorNotificationRequest = new NotificationRequest;
 			errorNotificationRequest.title =
 				nova.localize("Could Not Update Pyright");
 
@@ -195,7 +195,7 @@ function registerCommands(dataProvider: StatusDataProvider) {
 		// notify of completion
 
 		//@ts-ignore: NotificationRequest's parameter is optional
-		let completionNotificationRequest = new NotificationRequest;
+		const completionNotificationRequest = new NotificationRequest;
 		completionNotificationRequest.title =
 			nova.localize("Download Completed");
 		completionNotificationRequest.body =
@@ -214,7 +214,7 @@ function registerCommands(dataProvider: StatusDataProvider) {
 			// unfortunately involve invoking this command twice.
 
 			//@ts-ignore: NotificationRequest's parameter is optional
-			let errorNotificationRequest = new NotificationRequest;
+			const errorNotificationRequest = new NotificationRequest;
 			errorNotificationRequest.title =
 				nova.localize("Configuration Change Needed");
 			errorNotificationRequest.body =
@@ -226,7 +226,7 @@ function registerCommands(dataProvider: StatusDataProvider) {
 			// If it does, I'm sorry. I didn't mean to.
 
 			//@ts-ignore: NotificationRequest's parameter is optional
-			let actionNotificationRequest = new NotificationRequest;
+			const actionNotificationRequest = new NotificationRequest;
 			actionNotificationRequest.title =
 				nova.localize("Provide Permission to Delete a Directory");
 			actionNotificationRequest.body =
