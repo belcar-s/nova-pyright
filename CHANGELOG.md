@@ -1,3 +1,6 @@
+## 1.2.1
+Minimal improvements were made to the sidebar icon.
+
 ## 1.2.0
 The *Organize Imports* and *Add Missing Optional To Parameter* commands are now functional.
 
