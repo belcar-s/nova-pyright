@@ -44,7 +44,7 @@ export async function downloadLanguageServer (name: string) {
 					nova.localize("Retry")
 				];
 				await nova.notifications.add(failureNotificationRequest);
-				tryToInstall();
+				return tryToInstall();
 			} else {
 				throw e;
 			}
