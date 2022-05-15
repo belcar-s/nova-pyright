@@ -1,3 +1,7 @@
+## 1.3.0
+- A new command —*Rename Symbol* —was introduced. It's a little bit unreliable, unfortunately.
+- The extension now behaves more desirably in computers in which NPM is not installed.
+
 ## 1.2.1
 Minimal improvements were made to the sidebar icon.
 
