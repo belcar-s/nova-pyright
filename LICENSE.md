@@ -1,6 +1,7 @@
 MIT License
 
 Copyright (c) 2022 Belcar Santiago Cuentas-Zavala Infante
+
 Copyright 2022 Cameron Little, Sam Gwilym
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
