@@ -1,9 +1,11 @@
+import * as LSP from "vscode-languageserver-types";
+
 import { serverPaths, serverFolders, USER_PATH_CONFIG_KEY } from "./paths";
 import { StatusDataProvider, Element } from "./StatusDataProvider.js";
 import { PyrightLanguageServer } from "./PyrightLanguageServer.js";
 import { downloadLanguageServer } from "./download.js";
 import { forcefullyUnlock, ensureLanguageServer } from "./initialization.js";
-import { LSPrangeToRange } from "./LSPedits.js";
+import { rangeToLSPrange, applyLSPedits, applyWorkspaceEdit } from "./LSPedits.js";
 
 let languageServer: PyrightLanguageServer | undefined;
 
@@ -119,16 +121,11 @@ function registerCommands(dataProvider: StatusDataProvider) {
 				command,
 				arguments: [editor.document.uri]
 			};
-			const edits: any = await languageClient.sendRequest("workspace/executeCommand", parameters);
+			const edits = await languageClient.sendRequest("workspace/executeCommand", parameters) as LSP.TextEdit[];
 			if (edits?.length > 0) {
 				// This 'if' statement is not to make an unneeded edit,
 				// which supposedly adds to the undo stack.
-				editor.edit((textEditorEdit) => {
-					for (const change of edits.reverse()) {
-						const range = LSPrangeToRange(editor.document, change.range);
-						textEditorEdit.replace(range, change.newText);
-					}
-				});
+				applyLSPedits(editor, edits);
 			}
 		};
 	}
@@ -207,6 +204,61 @@ function registerCommands(dataProvider: StatusDataProvider) {
 		// restart Language Server
 		restartServer(dataProvider);
 	});
+	nova.commands.register(
+		"renameSymbol",
+		async (workspaceOrEditor: Workspace | TextEditor) => {
+			const editor: TextEditor =
+				// @ts-expect-error: I HATE TYPESCRIPT!!!
+				workspaceOrEditor.activeTextEditor ?? workspaceOrEditor;
+
+			editor.selectWordsContainingCursors();
+
+			const selectedRange = editor.selectedRange;
+			const selectedPosition = rangeToLSPrange(editor.document, selectedRange)?.start;
+			if (!selectedPosition) {
+				const failureNotificationRequest = new NotificationRequest("I certainly regret switching to this language.");
+				failureNotificationRequest.title = "Can Not Rename Symbol";
+				failureNotificationRequest.body = "Try changing your selection.";
+				nova.notifications.add(failureNotificationRequest);
+				return;
+			}
+
+			const newName = await new Promise<string | null>(resolve =>
+				nova.workspace.showInputPalette(
+					"Type a new name for this symbol.",
+					{ placeholder: editor.selectedText, value: editor.selectedText },
+					resolve
+				)
+			);
+			if (!newName || newName == editor.selectedText) {
+				return;
+			}
+
+			const params = {
+				textDocument: { uri: editor.document.uri },
+				position: selectedPosition,
+				newName,
+			};
+			const response = (await languageServer.languageClient.sendRequest(
+				"textDocument/rename",
+				params,
+			)) as LSP.WorkspaceEdit | null;
+			if (response == null) {
+				// @ts-expect-error: The Nova types are outdated.
+				const failureNotificationRequest = new NotificationRequest();
+				failureNotificationRequest.title = "Can Not Rename Symbol";
+				failureNotificationRequest.body = "The cause of this problem is unknown.";
+				nova.notifications.add(failureNotificationRequest);
+				return;
+			}
+
+			await applyWorkspaceEdit(response);
+
+			// show the original document
+			await nova.workspace.openFile(editor.document.uri);
+			editor.scrollToCursorPosition;
+		}
+	);
 	nova.commands.register("useBundledServer", async () => {
 		if (nova.config.get(USER_PATH_CONFIG_KEY)) {
 			// For a user who has downloaded an updated version of

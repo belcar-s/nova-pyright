@@ -40,6 +40,13 @@
 						"python"
 					]
 				}
+			},
+			{
+				"title": "Rename Symbol",
+				"command": "renameSymbol",
+				"filters": {
+					"syntaxes": ["python"]
+				}
 			}
 		],
 		"extensions": [
