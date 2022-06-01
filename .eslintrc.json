@@ -1,46 +1,29 @@
 {
-    "ignorePatterns": ["Scripts"],
-    "env": {
-        "browser": true,
-        "commonjs": true,
-        "es2021": true
-    },
-    "parserOptions": {
-        "ecmaVersion": "latest"
-    },
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-        "@typescript-eslint"
-    ],
-    "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended"
-    ],
-    "rules": {
-        "indent": [
-            "error",
-            "tab"
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "quotes": [
-            "error",
-            "double"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ]
-    },
-    "globals": {
-        "nova": true,
-        "TreeView": true,
-        "NotificationRequest": true,
-        "Process": true,
-        "__dirname": true,
-        "LanguageClient": true,
-        "TreeItem": true
-    }
+	"ignorePatterns": ["Scripts"],
+	"env": {
+		"browser": true,
+		"commonjs": true,
+		"es2021": true
+	},
+	"parserOptions": {
+		"ecmaVersion": "latest"
+	},
+	"parser": "@typescript-eslint/parser",
+	"plugins": ["@typescript-eslint"],
+	"extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+	"rules": {
+		"indent": ["error", "tab"],
+		"linebreak-style": ["error", "unix"],
+		"quotes": ["error", "double"],
+		"semi": ["error", "always"]
+	},
+	"globals": {
+		"nova": true,
+		"TreeView": true,
+		"NotificationRequest": true,
+		"Process": true,
+		"__dirname": true,
+		"LanguageClient": true,
+		"TreeItem": true
+	}
 }

@@ -5,7 +5,11 @@ import { StatusDataProvider, Element } from "./StatusDataProvider.js";
 import { PyrightLanguageServer } from "./PyrightLanguageServer.js";
 import { downloadLanguageServer } from "./download.js";
 import { forcefullyUnlock, ensureLanguageServer } from "./initialization.js";
-import { rangeToLSPrange, applyLSPedits, applyWorkspaceEdit } from "./LSPedits.js";
+import {
+	rangeToLSPrange,
+	applyLSPedits,
+	applyWorkspaceEdit,
+} from "./LSPedits.js";
 
 let languageServer: PyrightLanguageServer | undefined;
 
@@ -29,7 +33,9 @@ function loadSidebar() {
 	const SECTION_ID = "pyright.status-details";
 
 	const dataProvider = new StatusDataProvider();
-	const treeView = new TreeView(SECTION_ID, { dataProvider }) as TreeView<Element>;
+	const treeView = new TreeView(SECTION_ID, {
+		dataProvider,
+	}) as TreeView<Element>;
 	dataProvider.treeView = treeView;
 
 	// (?) The use of this is unknown to me.
@@ -54,7 +60,10 @@ function restartServer(dataProvider: StatusDataProvider) {
 	// load it :)
 	loadLanguageServer(languageServer, dataProvider);
 }
-function loadLanguageServer(server: PyrightLanguageServer, dataProvider: StatusDataProvider) {
+function loadLanguageServer(
+	server: PyrightLanguageServer,
+	dataProvider: StatusDataProvider
+) {
 	function loadJSON(path: string) {
 		const file = nova.fs.open(path) as FileTextMode;
 		const lines = file.readlines();
@@ -64,11 +73,13 @@ function loadLanguageServer(server: PyrightLanguageServer, dataProvider: StatusD
 
 	// the Pyright server's `package.json` file, decoded
 	const serverPackageJSON = loadJSON(
-		nova.path.normalize(nova.path.join(
-			server.path, // the server's entry point
-			"..",
-			"package.json"
-		))
+		nova.path.normalize(
+			nova.path.join(
+				server.path, // the server's entry point
+				"..",
+				"package.json"
+			)
+		)
 	);
 
 	dataProvider.updateStatus(nova.localize("Starting…"));
@@ -76,16 +87,17 @@ function loadLanguageServer(server: PyrightLanguageServer, dataProvider: StatusD
 		serverPackageJSON.version + ` (${nova.localize(server.type)})`
 	);
 
-	server.start().catch(e => {
+	server.start().catch((e) => {
 		// This function is run after the server quits.
 		dataProvider.updateStatus(nova.localize("Stopped"));
 
 		// inform the user of the error
 
 		//@ts-expect-error: NotificationRequest's parameter is optional.
-		const notificationRequest = new NotificationRequest;
-		notificationRequest.title =
-			nova.localize("Pyright Language Server Stopped");
+		const notificationRequest = new NotificationRequest();
+		notificationRequest.title = nova.localize(
+			"Pyright Language Server Stopped"
+		);
 
 		// obtain the notification's body, which depends
 		// on the cause of the error
@@ -114,14 +126,17 @@ function registerCommands(dataProvider: StatusDataProvider) {
 		loadLanguageServer(languageServer, dataProvider);
 	});
 
-	function getEditingLSPcommandCallback (command: string) {
+	function getEditingLSPcommandCallback(command: string) {
 		return async (editor: TextEditor) => {
 			const languageClient = languageServer.languageClient;
 			const parameters = {
 				command,
-				arguments: [editor.document.uri]
+				arguments: [editor.document.uri],
 			};
-			const edits = await languageClient.sendRequest("workspace/executeCommand", parameters) as LSP.TextEdit[];
+			const edits = (await languageClient.sendRequest(
+				"workspace/executeCommand",
+				parameters
+			)) as LSP.TextEdit[];
 			if (edits?.length > 0) {
 				// This 'if' statement is not to make an unneeded edit,
 				// which supposedly adds to the undo stack.
@@ -143,11 +158,13 @@ function registerCommands(dataProvider: StatusDataProvider) {
 	nova.commands.register("updateLanguageServer", async () => {
 		if (isDownloading) {
 			//@ts-expect-error: NotificationRequest's parameter is optional.
-			const alreadyStartedNotificationRequest = new NotificationRequest;
-			alreadyStartedNotificationRequest.title =
-				nova.localize("Cannot Download Right Now");
-			alreadyStartedNotificationRequest.body =
-				nova.localize("Pyright is already being downloaded.");
+			const alreadyStartedNotificationRequest = new NotificationRequest();
+			alreadyStartedNotificationRequest.title = nova.localize(
+				"Cannot Download Right Now"
+			);
+			alreadyStartedNotificationRequest.body = nova.localize(
+				"Pyright is already being downloaded."
+			);
 			nova.notifications.add(alreadyStartedNotificationRequest);
 			return;
 		}
@@ -157,13 +174,11 @@ function registerCommands(dataProvider: StatusDataProvider) {
 		// provide an immediate reaction
 
 		//@ts-expect-error: NotificationRequest's parameter is optional.
-		const initialNotificationRequest = new NotificationRequest;
-		initialNotificationRequest.title =
-			nova.localize("Downloading");
-		initialNotificationRequest.body =
-			nova.localize(
-				"The latest version of Pyright is being downloaded."
-			);
+		const initialNotificationRequest = new NotificationRequest();
+		initialNotificationRequest.title = nova.localize("Downloading");
+		initialNotificationRequest.body = nova.localize(
+			"The latest version of Pyright is being downloaded."
+		);
 		nova.notifications.add(initialNotificationRequest);
 
 		// actually download
@@ -174,14 +189,16 @@ function registerCommands(dataProvider: StatusDataProvider) {
 			// exit code.
 
 			//@ts-expect-error: NotificationRequest's parameter is optional.
-			const errorNotificationRequest = new NotificationRequest;
-			errorNotificationRequest.title =
-				nova.localize("Could Not Update Pyright");
+			const errorNotificationRequest = new NotificationRequest();
+			errorNotificationRequest.title = nova.localize(
+				"Could Not Update Pyright"
+			);
 
 			// (?) I'm not confident of that this is a good
 			// message :)
-			errorNotificationRequest.body =
-				nova.localize(`An unknown error occurred. (${e})`);
+			errorNotificationRequest.body = nova.localize(
+				`An unknown error occurred. (${e})`
+			);
 
 			nova.notifications.add(errorNotificationRequest);
 			return;
@@ -192,13 +209,11 @@ function registerCommands(dataProvider: StatusDataProvider) {
 		// notify of completion
 
 		//@ts-expect-error: NotificationRequest's parameter is optional.
-		const completionNotificationRequest = new NotificationRequest;
-		completionNotificationRequest.title =
-			nova.localize("Download Completed");
-		completionNotificationRequest.body =
-			nova.localize(
-				"The latest version of Pyright was downloaded."
-			);
+		const completionNotificationRequest = new NotificationRequest();
+		completionNotificationRequest.title = nova.localize("Download Completed");
+		completionNotificationRequest.body = nova.localize(
+			"The latest version of Pyright was downloaded."
+		);
 		nova.notifications.add(completionNotificationRequest);
 
 		// restart Language Server
@@ -214,16 +229,21 @@ function registerCommands(dataProvider: StatusDataProvider) {
 			editor.selectWordsContainingCursors();
 
 			const selectedRange = editor.selectedRange;
-			const selectedPosition = rangeToLSPrange(editor.document, selectedRange)?.start;
+			const selectedPosition = rangeToLSPrange(
+				editor.document,
+				selectedRange
+			)?.start;
 			if (!selectedPosition) {
-				const failureNotificationRequest = new NotificationRequest("I certainly regret switching to this language.");
+				const failureNotificationRequest = new NotificationRequest(
+					"I certainly regret switching to this language."
+				);
 				failureNotificationRequest.title = "Can Not Rename Symbol";
 				failureNotificationRequest.body = "Try changing your selection.";
 				nova.notifications.add(failureNotificationRequest);
 				return;
 			}
 
-			const newName = await new Promise<string | null>(resolve =>
+			const newName = await new Promise<string | null>((resolve) =>
 				nova.workspace.showInputPalette(
 					"Type a new name for this symbol.",
 					{ placeholder: editor.selectedText, value: editor.selectedText },
@@ -241,13 +261,14 @@ function registerCommands(dataProvider: StatusDataProvider) {
 			};
 			const response = (await languageServer.languageClient.sendRequest(
 				"textDocument/rename",
-				params,
+				params
 			)) as LSP.WorkspaceEdit | null;
 			if (response == null) {
 				// @ts-expect-error: The Nova types are outdated.
 				const failureNotificationRequest = new NotificationRequest();
 				failureNotificationRequest.title = "Can Not Rename Symbol";
-				failureNotificationRequest.body = "The cause of this problem is unknown.";
+				failureNotificationRequest.body =
+					"The cause of this problem is unknown.";
 				nova.notifications.add(failureNotificationRequest);
 				return;
 			}
@@ -266,11 +287,13 @@ function registerCommands(dataProvider: StatusDataProvider) {
 			// unfortunately involve invoking this command twice.
 
 			//@ts-expect-error: NotificationRequest's parameter is optional.
-			const errorNotificationRequest = new NotificationRequest;
-			errorNotificationRequest.title =
-				nova.localize("Configuration Change Needed");
-			errorNotificationRequest.body =
-				nova.localize("To use the built-in server, empty the text box labelled 'Server Location'.");
+			const errorNotificationRequest = new NotificationRequest();
+			errorNotificationRequest.title = nova.localize(
+				"Configuration Change Needed"
+			);
+			errorNotificationRequest.body = nova.localize(
+				"To use the built-in server, empty the text box labelled 'Server Location'."
+			);
 			nova.notifications.add(errorNotificationRequest);
 		} else {
 			const updatedPath = serverFolders().updated;
@@ -278,11 +301,11 @@ function registerCommands(dataProvider: StatusDataProvider) {
 			// If it does, I'm sorry. I didn't mean to.
 
 			//@ts-expect-error: NotificationRequest's parameter is optional.
-			const actionNotificationRequest = new NotificationRequest;
-			actionNotificationRequest.title =
-				nova.localize("Provide Permission to Delete a Directory");
-			actionNotificationRequest.body =
-				`To use the bundled server, the extension needs to remove ${updatedPath}. This is where the updated version of Pyright was downloaded.`;
+			const actionNotificationRequest = new NotificationRequest();
+			actionNotificationRequest.title = nova.localize(
+				"Provide Permission to Delete a Directory"
+			);
+			actionNotificationRequest.body = `To use the bundled server, the extension needs to remove ${updatedPath}. This is where the updated version of Pyright was downloaded.`;
 			actionNotificationRequest.actions = [
 				nova.localize("Cancel"),
 				nova.localize("Remove folder"),

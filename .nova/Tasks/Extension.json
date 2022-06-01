@@ -1,8 +1,8 @@
 {
-  "actions" : {
-    "build" : {
-      "enabled" : true,
-      "script" : "npx tsc"
-    }
-  }
+	"actions": {
+		"build": {
+			"enabled": true,
+			"script": "npx tsc"
+		}
+	}
 }

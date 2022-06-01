@@ -60,10 +60,7 @@ export class StatusDataProvider implements TreeDataProvider<Element> {
 			// outcome determines the content of the
 			// section's top level.
 
-			return [
-				this.status,
-				this.version,
-			];
+			return [this.status, this.version];
 		}
 	}
 
@@ -74,7 +71,7 @@ export class StatusDataProvider implements TreeDataProvider<Element> {
 		return element.parent;
 	}
 
-	getTreeItem({name, value}: {name: string, value: string}) {
+	getTreeItem({ name, value }: { name: string; value: string }) {
 		const item = new TreeItem(name);
 		item.descriptiveText = value;
 		return item;

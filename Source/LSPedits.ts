@@ -1,9 +1,6 @@
 import * as LSP from "vscode-languageserver-types";
 
-export function applyLSPedits(
-	editor: TextEditor,
-	edits: Array<LSP.TextEdit>,
-) {
+export function applyLSPedits(editor: TextEditor, edits: Array<LSP.TextEdit>) {
 	return editor.edit((textEditorEdit) => {
 		for (const change of edits.reverse()) {
 			const range = LSPrangeToRange(editor.document, change.range);
@@ -12,11 +9,9 @@ export function applyLSPedits(
 	});
 }
 
-export async function applyWorkspaceEdit(
-	workspaceEdit: LSP.WorkspaceEdit,
-) {
+export async function applyWorkspaceEdit(workspaceEdit: LSP.WorkspaceEdit) {
 	if (workspaceEdit.documentChanges) {
-	// look for the newer documentChanges property first
+		// look for the newer documentChanges property first
 		for (const change of workspaceEdit.documentChanges || []) {
 			// TODO: support Create, Rename, Delete
 			if (!("edits" in change)) {
@@ -29,7 +24,7 @@ export async function applyWorkspaceEdit(
 			const editor = await nova.workspace.openFile(change.textDocument.uri);
 			if (!editor) {
 				nova.workspace.showWarningMessage(
-					`Failed to open ${change.textDocument.uri}.`,
+					`Failed to open ${change.textDocument.uri}.`
 				);
 				continue;
 			}
@@ -53,7 +48,7 @@ export async function applyWorkspaceEdit(
 	}
 }
 
-export function LSPrangeToRange (document: TextDocument, range: LSP.Range) {
+export function LSPrangeToRange(document: TextDocument, range: LSP.Range) {
 	const fullContents = document.getTextInRange(new Range(0, document.length));
 	let rangeStart = 0;
 	let rangeEnd = 0;
@@ -76,7 +71,7 @@ export function LSPrangeToRange (document: TextDocument, range: LSP.Range) {
 
 export function rangeToLSPrange(
 	document: TextDocument,
-	range: Range,
+	range: Range
 ): LSP.Range | null {
 	const fullContents = document.getTextInRange(new Range(0, document.length));
 	let precedingCharacters = 0;

@@ -1,7 +1,7 @@
 function which(command: string): Promise<string> {
 	return new Promise((resolve) => {
 		const options = {
-			args: [command]
+			args: [command],
 		};
 		const process = new Process("/usr/bin/which", options);
 		process.onStdout((line) =>
@@ -16,7 +16,7 @@ function exists(path: string) {
 	return !!nova.fs.stat(path);
 }
 
-class AlreadyStartedError extends Error { }
+class AlreadyStartedError extends Error {}
 export class PyrightLanguageServer {
 	path: string;
 	type: string;
@@ -55,10 +55,10 @@ export class PyrightLanguageServer {
 		const serverOptions: ServerOptions = {
 			path: nodePath,
 			args: [this.path, "--stdio"],
-			type: "stdio"
+			type: "stdio",
 		};
 		const clientOptions = {
-			syntaxes: ["python"]
+			syntaxes: ["python"],
 		};
 		this.languageClient = new LanguageClient(
 			"pyright",
@@ -67,7 +67,9 @@ export class PyrightLanguageServer {
 			clientOptions
 		);
 
-		const onStop = new Promise((_resolve, reject) => this.languageClient.onDidStop(reject));
+		const onStop = new Promise((_resolve, reject) =>
+			this.languageClient.onDidStop(reject)
+		);
 
 		// This can throw:
 		this.languageClient.start();
