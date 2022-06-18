@@ -17,3 +17,5 @@ The extension requires that Node.js is installed.
 ## Entitlements
 
 Network and file system access is needed to download the Pyright Language Server automatically.
+
+
